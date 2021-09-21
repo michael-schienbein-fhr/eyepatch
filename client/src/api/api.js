@@ -12,16 +12,16 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 
 class EyepatchApi {
   // the token for interactive with the API will be stored here.
-  static token;
+  static userToken;
 
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
     const url = `${BASE_URL}/${endpoint}`;
-    const headers = { Authorization: `Bearer ${EyepatchApi.token}` };
+    const headers = { Authorization: `Bearer ${EyepatchApi.userToken}` };
     const params = (method === "get")
-        ? data
-        : {};
+      ? data
+      : {};
 
     try {
       return (await axios({ url, method, data, params, headers })).data;
@@ -37,14 +37,29 @@ class EyepatchApi {
   /** Get token for login from username, password. */
 
   static async login(data) {
-    let res = await this.request(`auth/token`, data, "post");
-    return res.token;
+    console.log('testing');
+    let res = await this.request(`auth/token/user`, data, "post");
+    return res.userToken;
   }
 
   /** Signup for site. */
 
   static async signup(data) {
     let res = await this.request(`auth/register`, data, "post");
+    return res.userToken;
+  }
+
+  /** Get token for login from username, password. */
+
+  static async joinRoom(data) {
+    let res = await this.request(`auth/token/room`, data, "post");
+    return res.token;
+  }
+
+  /** Create new room. */
+
+  static async createRoom(data) {
+    let res = await this.request(`auth/create`, data, "post");
     return res.token;
   }
 
@@ -82,7 +97,7 @@ class EyepatchApi {
   //   await this.request(`users/${username}/jobs/${id}`, {}, "post");
   // }
 
-  
+
 
   // /** Save user profile page. */
 

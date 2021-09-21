@@ -1,43 +1,43 @@
 "use strict";
 
-/** Routes for users. */
+/** Routes for rooms. */
 
 const jsonschema = require("jsonschema");
 
 const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
-const User = require("../models/user");
-const { createUserToken } = require("../helpers/tokens");
-const userNewSchema = require("../schemas/userNew.json");
-const userUpdateSchema = require("../schemas/userUpdate.json");
+const Room = require("../models/user");
+const { createRoomToken } = require("../helpers/tokens");
+const roomNewSchema = require("../schemas/roomNew.json");
+const roomUpdateSchema = require("../schemas/roomUpdate.json");
 
 const router = express.Router();
 
 
-/** POST / { user }  => { user, token }
+/** POST / { room }  => { room, token }
  *
- * Adds a new user. This is not the registration endpoint --- instead, this is
- * only for admin users to add new users. The new user being added can be an
- * admin.
+ * Adds a new room. This is not the registration endpoint --- instead, this is
+ * only for admin users to add new rooms. 
+ * 
  *
- * This returns the newly created user and an authentication token for them:
- *  {user: { username, firstName, lastName, email, isAdmin }, token }
+ * This returns the newly created room and an authentication token for them:
+ *  {room: { id, roomOwner, roomName, hasPass }, token }
  *
  * Authorization required: admin
  **/
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, userNewSchema);
+    const validator = jsonschema.validate(req.body, roomNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const user = await User.register(req.body);
-    const token = createUserToken(user);
-    return res.status(201).json({ user, token });
+    const room = await Room.createRoom(req.body);
+    const token = createRoomToken(room);
+    return res.status(201).json({ room, token });
   } catch (err) {
     return next(err);
   }
@@ -91,7 +91,7 @@ router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, nex
 
 router.patch("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, userUpdateSchema);
+    const validator = jsonschema.validate(req.body, roomUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
@@ -118,6 +118,7 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, 
     return next(err);
   }
 });
+
 
 
 module.exports = router;

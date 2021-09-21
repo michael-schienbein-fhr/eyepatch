@@ -8,3 +8,17 @@ CREATE TABLE users (
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE rooms (
+  id SERIAL PRIMARY KEY,
+  room_owner VARCHAR(25) NOT NULL
+    REFERENCES users,
+  room_name VARCHAR(30) NOT NULL,
+  password VARCHAR(30),
+  room_members VARCHAR(25),
+  video_queue VARCHAR(25),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE videos (
+  youtubeid VARCHAR(25) PRIMARY KEY 
+);
