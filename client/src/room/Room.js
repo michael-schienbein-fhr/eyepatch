@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-import Chat from './Chat';
-import Video from './Video';
+import Chat from '../chat/Chat';
+import Video from '../video/Video';
 
 const WEBSOCKET_BASE = (process.env.NODE_ENV === "test")
   ? "ws://192.168.1.40:8001"
@@ -22,7 +22,7 @@ const Room = () => {
   const urlParts = document.URL.split("/");
   const roomName = urlParts[urlParts.length - 1];
 
-  const wsURL = `${WEBSOCKET_BASE}/chat/${roomName}`;
+  const wsURL = `${WEBSOCKET_BASE}/room/${roomName}`;
 
   const onOpen = () => {
     console.log('opened');

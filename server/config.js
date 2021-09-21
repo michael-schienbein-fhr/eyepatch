@@ -9,7 +9,7 @@ const getDatabaseUri = () => {
   : process.env.DATABASE_URL || "eyepatch";
 };
 
-const PORT = +process.env.PORT || 8000;
+const PORT = +process.env.PORT || 3001;
 
 const BCRYPT_WF = (process.env.NODE_ENV === "test")
   ? 1
@@ -18,13 +18,13 @@ const BCRYPT_WF = (process.env.NODE_ENV === "test")
 const SECRET_KEY = process.env.SECRET_KEY || "secret-time";
 
 console.log("");
-console.log("Eyepatch API Server Config:".brightCyan);
+console.log("Eyepatch Api Server Config:".brightCyan);
 console.log("NODE_ENV:".brightYellow, process.env.NODE_ENV);
 console.log("PORT:".brightYellow, PORT.toString());
 console.log("SECRET_KEY:".brightYellow, SECRET_KEY);
 console.log("BCRYPT_WF:".brightYellow, BCRYPT_WF);
 console.log("Database:".brightYellow, getDatabaseUri());
-console.log("---------------------------".brightCyan, "\n");
+console.log("---------------------------------".brightCyan, "\n");
 
 
 

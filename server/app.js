@@ -1,39 +1,45 @@
-/** app for groupchat */
+"use strict";
 
-const express = require('express');
+/** Express app for jobly. */
+
+const express = require("express");
+const cors = require("cors");
+
+const { NotFoundError } = require("./expressError");
+
+const { authenticateJWT } = require("./middleware/auth");
+const authRoutes = require("./routes/auth");
+const usersRoutes = require("./routes/users");
+
+
+const morgan = require("morgan");
+
 const app = express();
-// const path = require("path");
 
-//Serve frontend files
-// app.use(express.static(path.join(__dirname, "..", "client", "build"))); 
+app.use(cors());
+app.use(express.json());
+app.use(morgan("tiny"));
+app.use(authenticateJWT);
 
-
-/** Handle websocket chat */
-
-// allow for app.ws routes for websocket routes
-
+app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
 
 
 
-/** Handle a persistent connection to /chat/[roomName]
- *
- * Note that this is only called *once* per client --- not every time
- * a particular websocket chat is sent.
- *
- * `ws` becomes the socket for the client; it is specific to that visitor.
- * The `ws.send` method is how we'll send messages back to that socket.
- */
+/** Handle 404 errors -- this matches everything */
+app.use(function (req, res, next) {
+  return next(new NotFoundError());
+});
 
+/** Generic error handler; anything unhandled goes here. */
+app.use(function (err, req, res, next) {
+  if (process.env.NODE_ENV !== "test") console.error(err.stack);
+  const status = err.status || 500;
+  const message = err.message;
 
-/** serve homepage --- just static HTML
- *
- * Allow any roomName to come after homepage --- client JS will find the
- * roomname in the URL.
- *
- * */
-
-// app.get('/', function (req, res, next) {
-//   res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-// });
+  return res.status(status).json({
+    error: { message, status },
+  });
+});
 
 module.exports = app;
