@@ -1,21 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Chat from '../chat/Chat';
 import Video from '../video/Video';
+import UserContext from "../auth/UserContext";
 
 const WEBSOCKET_BASE = (process.env.NODE_ENV === "test")
   ? "ws://192.168.1.40:8001"
   : "ws://localhost:8001" //put heroku here
 
 const Room = () => {
-
+  const { currentUser } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState("");
   const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
 
   const changeUsername = () => {
-    setUsername(prompt("What Is Your Username?"));
-  }
+    setUsername(currentUser.username);
+  };
 
   useEffect(changeUsername, []);
 
@@ -35,7 +36,7 @@ const Room = () => {
     // console.log(message.type)
     if (message.type === 'chat') {
       setMessages((_messages) => [..._messages, message]);
-    } else if (message.type === 'video'){
+    } else if (message.type === 'video') {
       setGlobalPlaybackTime(message.time);
     }
   };
