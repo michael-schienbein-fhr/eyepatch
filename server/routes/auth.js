@@ -54,7 +54,6 @@ router.post("/register", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    // console.log(req.body, "this is the register route");
     const newUser = await User.register({ ...req.body, isAdmin: false });
     const userToken = createToken(newUser);
     return res.status(201).json({ userToken });

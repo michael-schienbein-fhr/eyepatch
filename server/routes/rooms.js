@@ -85,14 +85,14 @@ router.get("/newest", async function (req, res, next) {
  * Authorization required: admin or same user-as-:username
  **/
 
-// router.get("/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
-//   try {
-//     const room = await Room.get(req.params.id);
-//     return res.json({ room });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+router.get("/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const room = await Room.get(req.params.id);
+    return res.json({ room });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 
 /** PATCH /[username] { user } => { user }

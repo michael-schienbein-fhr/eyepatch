@@ -29,9 +29,8 @@ export const ROOM_TOKEN_STORAGE_ID = "eyepatch-room-token";
 
 function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
-  // const [applicationIds, setApplicationIds] = useState(new Set([]));
   const [currentUser, setCurrentUser] = useState(null);
-  
+  const [currentRoom, setCurrentRoom] = useState(null);
   const [userToken, setUserToken] = useLocalStorage(USER_TOKEN_STORAGE_ID);
   const [roomToken, setRoomToken] = useLocalStorage(ROOM_TOKEN_STORAGE_ID);
   console.debug(
@@ -46,23 +45,23 @@ function App() {
   // the value of the user token is a dependency for this effect.
 
   useEffect(function loadInfo() {
-    console.debug("App useEffect loadUserInfo", "userToken=", userToken);
+    console.debug("App useEffect loadUserInfo", "userToken=", userToken, "roomToken=", roomToken);
 
-    // async function getRoomInfo() {
-    //   if (roomToken) {
-    //     try {
-    //       let { username } = jwt.decode(userToken);
-    //       // put the token on the Api class so it can use it to call the API.
-    //       EyepatchApi.userToken = userToken;
-    //       let currentUser = await EyepatchApi.getCurrentUser(username);
-    //       setCurrentUser(currentUser);
-    //     } catch (err) {
-    //       console.error("App loadUserInfo: problem loading", err);
-    //       setCurrentUser(null);
-    //     }
-    //   }
-    //   setInfoLoaded(true);
-    // }
+    async function getRoomInfo() {
+      if (roomToken) {
+        try {
+          let { id } = jwt.decode(roomToken);
+          // put the token on the Api class so it can use it to call the API.
+          EyepatchApi.roomToken = roomToken;
+          let currentRoom = await EyepatchApi.getRoom(id);
+          setCurrentRoom(currentRoom);
+        } catch (err) {
+          console.error("App loadUserInfo: problem loading", err);
+          setCurrentUser(null);
+        }
+      }
+      setInfoLoaded(true);
+    }
 
     async function getCurrentUser() {
       if (userToken) {
@@ -86,8 +85,8 @@ function App() {
     // to false to control the spinner.
     setInfoLoaded(false);
     getCurrentUser();
-    // getRoomId();
-  }, [userToken]);
+    getRoomInfo();
+  }, [userToken, roomToken]);
 
   /** Handles site-wide logout. */
   function logout() {

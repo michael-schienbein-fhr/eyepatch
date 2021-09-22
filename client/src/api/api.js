@@ -13,6 +13,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 class EyepatchApi {
   // the token for interactive with the API will be stored here.
   static userToken;
+  static roomToken;
 
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
@@ -31,11 +32,11 @@ class EyepatchApi {
       throw Array.isArray(message) ? message : [message];
     }
   }
-
+  
   // Individual API routes
-
+  
   /** Get token for login from username, password. */
-
+  
   static async login(data) {
     let res = await this.request(`auth/token/user`, data, "post");
     return res.userToken;
@@ -74,6 +75,12 @@ class EyepatchApi {
   static async getRooms() {
     let res = await this.request("rooms");
     return res.rooms;
+  }
+  // /** Get room by id */
+
+  static async getRoom(id) {
+    let res = await this.request(`rooms/${id}`);
+    return res.room;
   }
 
   // /** Get newest room */

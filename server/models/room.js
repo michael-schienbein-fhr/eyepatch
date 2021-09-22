@@ -59,25 +59,27 @@ class Room {
 
   static async createRoom(
     { room_owner, room_name, password }) {
-    debugger
     let hashedPassword;
     let hasPass;
 
-    if (password === "") {
-      password = null;
-      hasPass = false;
-    };
     const duplicateCheck = await db.query(
       `SELECT room_name
-           FROM rooms
-           WHERE room_name = $1`,
+      FROM rooms
+      WHERE room_name = $1`,
       [room_name],
     );
 
     if (duplicateCheck.rows[0]) {
       throw new BadRequestError(`Duplicate Room: ${room_name}`);
     }
+
+    if (password === "") {
+      password = null;
+      hasPass = false;
+    };
+    
     if (password !== null) {
+      debugger
       hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
       hasPass = true;
     };

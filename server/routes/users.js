@@ -34,7 +34,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    
+
     const user = await User.register(req.body);
     const token = createUserToken(user);
     return res.status(201).json({ user, token });
@@ -69,14 +69,14 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: admin or same user-as-:username
  **/
 
-// router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
-//   try {
-//     const user = await User.get(req.params.username);
-//     return res.json({ user });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const user = await User.get(req.params.username);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 
 /** PATCH /[username] { user } => { user }

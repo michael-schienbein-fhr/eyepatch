@@ -15,7 +15,7 @@ function RoomCard({ id, roomName, hasPass }) {
   return (
     <div>
       {hasPass === true ?
-        (<Link className="CompanyCard card" to={`/rooms/login`}>
+        (<Link className="CompanyCard card" id={id} to={`/rooms/login`}>
           <div className="card-body">
             <h6 className="card-title">
               {roomName}
