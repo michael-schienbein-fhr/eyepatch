@@ -7,10 +7,10 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
-const Room = require("../models/user");
+const Room = require('../models/room');
 const { createRoomToken } = require("../helpers/tokens");
 const roomNewSchema = require("../schemas/roomNew.json");
-const roomUpdateSchema = require("../schemas/roomUpdate.json");
+// const roomUpdateSchema = require("../schemas/roomUpdate.json");
 
 const router = express.Router();
 
@@ -51,10 +51,26 @@ router.post("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: admin
  **/
 
-router.get("/", ensureAdmin, async function (req, res, next) {
+router.get("/", async function (req, res, next) {
   try {
-    const users = await User.findAll();
-    return res.json({ users });
+    const rooms = await Room.findAll();
+    return res.json({ rooms });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
+ *
+ * Returns list of all users.
+ *
+ * Authorization required: admin
+ **/
+
+router.get("/newest", async function (req, res, next) {
+  try {
+    const room = await Room.getNewest();
+    return res.json({ room });
   } catch (err) {
     return next(err);
   }
@@ -69,14 +85,14 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: admin or same user-as-:username
  **/
 
-router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
-  try {
-    const user = await User.get(req.params.username);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
-  }
-});
+// router.get("/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+//   try {
+//     const room = await Room.get(req.params.id);
+//     return res.json({ room });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 
 /** PATCH /[username] { user } => { user }
@@ -89,20 +105,20 @@ router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, nex
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.patch("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, roomUpdateSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
-    }
+// router.patch("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
+//   try {
+//     const validator = jsonschema.validate(req.body, roomUpdateSchema);
+//     if (!validator.valid) {
+//       const errs = validator.errors.map(e => e.stack);
+//       throw new BadRequestError(errs);
+//     }
 
-    const user = await User.update(req.params.username, req.body);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
-  }
-});
+//     const user = await User.update(req.params.username, req.body);
+//     return res.json({ user });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 
 /** DELETE /[username]  =>  { deleted: username }
@@ -110,14 +126,14 @@ router.patch("/:username", ensureCorrectUserOrAdmin, async function (req, res, n
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
-  try {
-    await User.remove(req.params.username);
-    return res.json({ deleted: req.params.username });
-  } catch (err) {
-    return next(err);
-  }
-});
+// router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
+//   try {
+//     await User.remove(req.params.username);
+//     return res.json({ deleted: req.params.username });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 
 

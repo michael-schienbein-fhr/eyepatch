@@ -28,8 +28,8 @@ class Room {
                   password,
                   room_owner AS "roomOwner",
                   room_name AS "roomName",
-                  room_members AS "roomMembers,
-                  video_queue AS "videoQueue,
+                  room_members AS "roomMembers",
+                  video_queue AS "videoQueue",
                   created_at,
            FROM rooms
            WHERE room_name = $1`,
@@ -59,6 +59,14 @@ class Room {
 
   static async createRoom(
     { room_owner, room_name, password }) {
+    debugger
+    let hashedPassword;
+    let hasPass;
+
+    if (password === "") {
+      password = null;
+      hasPass = false;
+    };
     const duplicateCheck = await db.query(
       `SELECT room_name
            FROM rooms
@@ -69,18 +77,21 @@ class Room {
     if (duplicateCheck.rows[0]) {
       throw new BadRequestError(`Duplicate Room: ${room_name}`);
     }
-
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    if (password !== null) {
+      hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+      hasPass = true;
+    };
 
     const result = await db.query(
       `INSERT INTO rooms
-           (room_owner, room_name, password)
-           VALUES ($1, $2, $3)
-           RETURNING id, room_owner AS roomOwner, room_name AS roomName, password AS hasPass`,
+           (room_owner, room_name, password, has_pass)
+           VALUES ($1, $2, $3, $4)
+           RETURNING id, room_owner AS roomOwner, room_name AS roomName, has_pass AS hasPass`,
       [
         room_owner,
         room_name,
-        hashedPassword
+        hashedPassword,
+        hasPass
       ],
     );
 
@@ -99,9 +110,10 @@ class Room {
       `SELECT id,
                   room_owner AS "roomOwner",
                   room_name AS "roomName",
-                  room_members AS "roomMembers,
-                  video_queue AS "videoQueue,
-                  created_at,
+                  room_members AS "roomMembers",
+                  video_queue AS "videoQueue",
+                  has_pass As "hasPass",
+                  created_at
            FROM rooms
            ORDER BY created_at`,
     );
@@ -121,12 +133,41 @@ class Room {
       `SELECT id,
               room_owner AS "roomOwner",
               room_name AS "roomName",
-              room_members AS "roomMembers,
-              ideo_queue AS "videoQueue,
-              created_at,
+              room_members AS "roomMembers",
+              video_queue AS "videoQueue",
+              has_pass AS "hasPass",
+              created_at
         FROM rooms
         WHERE id = $1`,
       [id],
+    );
+
+    const room = roomRes.rows[0];
+
+    if (!room) throw new NotFoundError(`No Room ID: ${id}`);
+
+    return room;
+  };
+
+  /** Given a room id, return data about newest single room.
+   *
+   * Returns { room_owner, room_name, room_members, video_queue, created_at }
+   *
+   * Throws NotFoundError if room not found.
+   **/
+
+  static async getNewest(id) {
+    const roomRes = await db.query(
+      `SELECT id,
+              room_owner AS "roomOwner",
+              room_name AS "roomName",
+              room_members AS "roomMembers",
+              video_queue AS "videoQueue",
+              has_pass AS "hasPass",
+              created_at
+        FROM rooms
+        ORDER BY id DESC
+        LIMIT 1`
     );
 
     const room = roomRes.rows[0];
@@ -152,7 +193,7 @@ class Room {
    * Callers of this function must be certain they have validated inputs to this
    * or a serious security risks are opened.
    */
-
+  // UPDATE THIS
   static async update(username, data) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);

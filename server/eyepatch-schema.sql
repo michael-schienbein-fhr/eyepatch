@@ -14,6 +14,7 @@ CREATE TABLE rooms (
     REFERENCES users,
   room_name VARCHAR(30) NOT NULL,
   password VARCHAR(30),
+  has_pass BOOLEAN NOT NULL,
   room_members VARCHAR(25),
   video_queue VARCHAR(25),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -37,7 +37,6 @@ class EyepatchApi {
   /** Get token for login from username, password. */
 
   static async login(data) {
-    console.log('testing');
     let res = await this.request(`auth/token/user`, data, "post");
     return res.userToken;
   }
@@ -60,8 +59,8 @@ class EyepatchApi {
 
   static async createRoom(data) {
     let res = await this.request(`auth/create`, data, "post");
-    return res.token;
-  }
+    return res;
+  };
 
   /** Get the current user. */
 
@@ -70,14 +69,21 @@ class EyepatchApi {
     return res.user;
   }
 
-  // /** Get companies (filtered by name if not undefined) */
+  // /** Get get all rooms */
 
-  // static async getCompanies(name) {
-  //   let res = await this.request("companies", { name });
-  //   return res.companies;
-  // }
+  static async getRooms() {
+    let res = await this.request("rooms");
+    return res.rooms;
+  }
 
-  // /** Get details on a company by handle. */
+  // /** Get newest room */
+
+  static async getNewest() {
+    let res = await this.request("rooms/newest");
+    return res.room;
+  }
+
+  // /** Get all */
 
   // static async getCompany(handle) {
   //   let res = await this.request(`companies/${handle}`);

@@ -29,7 +29,6 @@ router.post("/token/user", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    console.log('testing');
     const { username, password } = req.body;
     const user = await User.authenticate(username, password);
     const userToken = createUserToken(user);
@@ -37,7 +36,7 @@ router.post("/token/user", async function (req, res, next) {
   } catch (err) {
     return next(err);
   }
-}); 
+});
 
 /** POST /auth/register:   { user } => { token }
  *
@@ -55,10 +54,10 @@ router.post("/register", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
+    // console.log(req.body, "this is the register route");
     const newUser = await User.register({ ...req.body, isAdmin: false });
-    const token = createToken(newUser);
-    return res.status(201).json({ token });
+    const userToken = createToken(newUser);
+    return res.status(201).json({ userToken });
   } catch (err) {
     return next(err);
   }
@@ -105,9 +104,10 @@ router.post("/create", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const newRoom = await Room.create({ ...req.body });
+    const newRoom = await Room.createRoom({ ...req.body });
+    const newRoomId = newRoom.id.toString()
     const token = createRoomToken(newRoom);
-    return res.status(201).json({ token });
+    return res.status(201).send({ token, newRoomId });
   } catch (err) {
     return next(err);
   }

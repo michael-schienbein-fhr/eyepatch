@@ -19,8 +19,8 @@ function Navigation({ logout }) {
     return (
         <ul className="navbar-nav ms-auto">
           <li className="nav-item me-2">
-            <NavLink className="nav-link" to="/room/test">
-              Room
+            <NavLink className="nav-link" to="/rooms">
+              Rooms
             </NavLink>
           </li>
           <li className="nav-item me-2">

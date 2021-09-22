@@ -17,7 +17,7 @@ function createUserToken(user) {
 
 function createRoomToken(room) {
   console.assert(room.password !== undefined,
-      "createRoomToken passed user without isAdmin property");
+      "createRoomToken passed new room without password property");
   const passFlag = room.password ? true : false;
 
   let payload = {

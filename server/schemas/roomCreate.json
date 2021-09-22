@@ -3,6 +3,11 @@
   "$id": "http://example.com/example.json",
   "type": "object",
   "properties": {
+    "room_owner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
     "room_name": {
       "type": "string",
       "minLength": 1,
@@ -16,6 +21,7 @@
   },
   "additionalProperties": false,
   "required": [
+    "room_owner",
     "room_name"
   ]
 }
