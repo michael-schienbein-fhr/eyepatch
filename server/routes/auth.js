@@ -55,7 +55,7 @@ router.post("/register", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
     const newUser = await User.register({ ...req.body, isAdmin: false });
-    const userToken = createToken(newUser);
+    const userToken = createUserToken(newUser);
     return res.status(201).json({ userToken });
   } catch (err) {
     return next(err);
@@ -79,8 +79,8 @@ router.post("/token/room", async function (req, res, next) {
 
     const { id, password } = req.body;
     const room = await Room.authenticate(id, password);
-    const token = createRoomToken(room);
-    return res.json({ token });
+    const roomToken = createRoomToken(room);
+    return res.json({ roomToken });
   } catch (err) {
     return next(err);
   }
@@ -104,9 +104,8 @@ router.post("/create", async function (req, res, next) {
     }
 
     const newRoom = await Room.createRoom({ ...req.body });
-    const newRoomId = newRoom.id.toString()
-    const token = createRoomToken(newRoom);
-    return res.status(201).send({ token, newRoomId });
+    const roomToken = createRoomToken(newRoom);
+    return res.status(201).send({ roomToken });
   } catch (err) {
     return next(err);
   }

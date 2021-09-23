@@ -30,7 +30,6 @@ export const ROOM_TOKEN_STORAGE_ID = "eyepatch-room-token";
 function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [currentRoom, setCurrentRoom] = useState(null);
   const [userToken, setUserToken] = useLocalStorage(USER_TOKEN_STORAGE_ID);
   const [roomToken, setRoomToken] = useLocalStorage(ROOM_TOKEN_STORAGE_ID);
   console.debug(
@@ -38,6 +37,7 @@ function App() {
     "infoLoaded=", infoLoaded,
     "currentUser=", currentUser,
     "userToken=", userToken,
+    "roomToken=", roomToken
   );
 
   // Load user info from API. Until a user is logged in and they have a user token,
@@ -50,11 +50,11 @@ function App() {
     async function getRoomInfo() {
       if (roomToken) {
         try {
-          let { id } = jwt.decode(roomToken);
+          
           // put the token on the Api class so it can use it to call the API.
           EyepatchApi.roomToken = roomToken;
-          let currentRoom = await EyepatchApi.getRoom(id);
-          setCurrentRoom(currentRoom);
+          // let currentRoom = await EyepatchApi.getRoom(id);
+          // setCurrentRoom(currentRoom);
         } catch (err) {
           console.error("App loadUserInfo: problem loading", err);
           setCurrentUser(null);
@@ -152,8 +152,10 @@ function App() {
   async function createRoom(roomData) {
     try {
       let token = await EyepatchApi.createRoom(roomData);
-      let newRoomData = Object.values(token);
-      setRoomToken(newRoomData[0])
+      // let newRoomData = Object.values(token);
+      console.debug(token, "THIS IS THE NEW ROOM DATA");
+      setRoomToken(token)
+      // console.debug(roomToken);
       return { success: true };
     } catch (errors) {
       console.error("Room creation failed", errors);

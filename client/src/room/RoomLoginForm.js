@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Alert from "../common/Alert";
 
 /** Login form.
@@ -13,19 +13,22 @@ import Alert from "../common/Alert";
  * Routed as /login
  */
 
-function RoomLoginForm({ joinRoom, id }) {
+function RoomLoginForm({ joinRoom }) {
   const history = useHistory();
+  const { id } = useParams();
+  const newId = +id;
   const [formData, setFormData] = useState({
-    id,
+    id: newId,
     password: "",
   });
+
   const [formErrors, setFormErrors] = useState([]);
 
   console.debug(
-      "LoginForm",
-      "login=", typeof login,
-      "formData=", formData,
-      "formErrors", formErrors,
+    "LoginForm",
+    "login=", typeof login,
+    "formData=", formData,
+    "formErrors", formErrors,
   );
 
   /** Handle form submit:
@@ -37,7 +40,7 @@ function RoomLoginForm({ joinRoom, id }) {
     evt.preventDefault();
     let result = await joinRoom(formData);
     if (result.success) {
-      history.push("/rooms/:id");
+      history.push("/rooms/:id/private");
     } else {
       setFormErrors(result.errors);
     }
@@ -50,41 +53,41 @@ function RoomLoginForm({ joinRoom, id }) {
   }
 
   return (
-      <div className="LoginForm">
-        <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-          <h3 className="mb-3">Log In</h3>
+    <div className="LoginForm">
+      <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+        <h3 className="mb-3">Log In</h3>
 
-          <div className="card">
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Password</label>
-                  <input
-                      type="password"
-                      name="password"
-                      className="form-control"
-                      value={formData.password}
-                      onChange={handleChange}
-                      autoComplete="current-password"
-                      required
-                  />
-                </div>
+        <div className="card">
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  className="form-control"
+                  value={formData.password}
+                  onChange={handleChange}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
 
-                {formErrors.length
-                    ? <Alert type="danger" messages={formErrors} />
-                    : null}
+              {formErrors.length
+                ? <Alert type="danger" messages={formErrors} />
+                : null}
 
-                <button
-                    className="btn btn-primary mt-3"
-                    onSubmit={handleSubmit}
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+              <button
+                className="btn btn-primary mt-3"
+                onSubmit={handleSubmit}
+              >
+                Submit
+              </button>
+            </form>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 

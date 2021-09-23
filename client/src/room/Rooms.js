@@ -15,7 +15,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
  * Routes -> { CompanyCard, SearchForm }
  */
 
-const Rooms = () => {
+const Rooms = ({joinRoom}) => {
   console.debug("Rooms");
 
   const [rooms, setRooms] = useState(null);
@@ -51,7 +51,7 @@ const Rooms = () => {
                 id={c.id}
                 roomName={c.roomName}
                 hasPass={c.hasPass}
-                // logoUrl={c.logoUrl}
+                joinRoom={joinRoom}
               />
             ))}
           </div>

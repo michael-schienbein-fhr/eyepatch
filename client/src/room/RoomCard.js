@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import RoomLoginForm from "./RoomLoginForm";
 
 
 /** Show limited information about a company
@@ -9,13 +9,14 @@ import { Link } from "react-router-dom";
  * CompanyList -> CompanyCard
  */
 
-function RoomCard({ id, roomName, hasPass }) {
+function RoomCard({ id, roomName, hasPass}) {
   // console.debug("CompanyCard", logoUrl);
 
   return (
     <div>
       {hasPass === true ?
-        (<Link className="CompanyCard card" id={id} to={`/rooms/login`}>
+        (<Link className="CompanyCard card"
+        to={`/rooms/${id}/login`}>
           <div className="card-body">
             <h6 className="card-title">
               {roomName}

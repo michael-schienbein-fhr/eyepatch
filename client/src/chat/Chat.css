@@ -1,3 +1,9 @@
 .Chat {
-  text-align: center;
+	display: flex;
+
+	height: 100%;
+	max-width: 720rem;
+	margin: auto;
+
+	flex-direction: column;
 }

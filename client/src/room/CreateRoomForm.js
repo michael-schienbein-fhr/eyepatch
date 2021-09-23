@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import Alert from "../common/Alert";
 import UserContext from "../auth/UserContext";
 import EyepatchApi from "../api/api";
-
 /** Signup form.
  *
  * Shows form and manages update to state on changes.
@@ -31,6 +30,7 @@ function CreateRoomForm({ createRoom }) {
       try {
         let newRoom = await EyepatchApi.getNewest();
         setNewRoomId(newRoom.id);
+        console.debug(newRoomId)
       } catch (err) {
         console.error("App getRoomId: problem loading", err);
       }
@@ -55,8 +55,7 @@ function CreateRoomForm({ createRoom }) {
   async function handleSubmit(evt) {
     evt.preventDefault();
     let result = await createRoom(formData);
-    
-    //fix redirect with results.id?
+    console.debug(result);
     if (result.success) {
       history.push(`/rooms/${newRoomId + 1}`);
     } else {

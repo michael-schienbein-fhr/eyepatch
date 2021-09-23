@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 
 const express = require("express");
-const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
+const { ensureCorrectUserOrAdmin, ensureAdmin, ensureRoomLoggedIn } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const Room = require('../models/room');
 const { createRoomToken } = require("../helpers/tokens");
@@ -86,6 +86,23 @@ router.get("/newest", async function (req, res, next) {
  **/
 
 router.get("/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+  try {
+    const room = await Room.get(req.params.id);
+    return res.json({ room });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /[username] => { user }
+ *
+ * Returns { username, firstName, lastName, isAdmin, jobs }
+ *   where jobs is { id, title, companyHandle, companyName, state }
+ *
+ * Authorization required: admin or same user-as-:username
+ **/
+
+router.get("/:id/private", ensureRoomLoggedIn, async function (req, res, next) {
   try {
     const room = await Room.get(req.params.id);
     return res.json({ room });

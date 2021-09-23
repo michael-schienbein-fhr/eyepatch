@@ -15,11 +15,15 @@ class EyepatchApi {
   static userToken;
   static roomToken;
 
-  static async request(endpoint, data = {}, method = "get") {
-    console.debug("API Call:", endpoint, data, method);
+  static async request(endpoint, data = {}, method = "get", type) {
+    console.debug("API Call:", endpoint, data, method, type);
 
     const url = `${BASE_URL}/${endpoint}`;
-    const headers = { Authorization: `Bearer ${EyepatchApi.userToken}` };
+
+    const headers = (type === "user")
+      ? { Authorization: `Bearer ${EyepatchApi.userToken}` }
+      : { Authorization: `Bearer ${EyepatchApi.roomToken}` };
+
     const params = (method === "get")
       ? data
       : {};
@@ -32,41 +36,41 @@ class EyepatchApi {
       throw Array.isArray(message) ? message : [message];
     }
   }
-  
+
   // Individual API routes
-  
+
   /** Get token for login from username, password. */
-  
+
   static async login(data) {
-    let res = await this.request(`auth/token/user`, data, "post");
+    let res = await this.request(`auth/token/user`, data, "post", "user");
     return res.userToken;
   }
 
   /** Signup for site. */
 
   static async signup(data) {
-    let res = await this.request(`auth/register`, data, "post");
+    let res = await this.request(`auth/register`, data, "post", "user");
     return res.userToken;
   }
 
   /** Get token for login from username, password. */
 
   static async joinRoom(data) {
-    let res = await this.request(`auth/token/room`, data, "post");
-    return res.token;
+    let res = await this.request(`auth/token/room`, data, "post", "room");
+    return res.room;
   }
 
   /** Create new room. */
 
   static async createRoom(data) {
-    let res = await this.request(`auth/create`, data, "post");
-    return res;
+    let res = await this.request(`auth/create`, data, "post", "room");
+    return res.roomToken;
   };
 
   /** Get the current user. */
 
   static async getCurrentUser(username) {
-    let res = await this.request(`users/${username}`);
+    let res = await this.request(`users/${username}`, {}, "get", "user");
     return res.user;
   }
 

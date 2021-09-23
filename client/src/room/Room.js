@@ -1,4 +1,6 @@
+import './Room.css';
 import { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Chat from '../chat/Chat';
 import Video from '../video/Video';
@@ -13,17 +15,14 @@ const Room = () => {
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState("");
   const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
-
+  const { id } = useParams();
   const changeUsername = () => {
     setUsername(currentUser.username);
   };
 
   useEffect(changeUsername, []);
 
-  const urlParts = document.URL.split("/");
-  const roomName = urlParts[urlParts.length - 1];
-
-  const wsURL = `${WEBSOCKET_BASE}/room/${roomName}`;
+  const wsURL = `${WEBSOCKET_BASE}/room/${id}`;
 
   const onOpen = () => {
     console.log('opened');
@@ -68,17 +67,25 @@ const Room = () => {
   }[readyState];
 
   return (
-    <div>
-      <Chat
-        messages={messages}
-        sendJsonMessage={sendJsonMessage}
-        connectionStatus={connectionStatus}
-        readyState={readyState}
-      />
-      <Video
-        sendJsonMessage={sendJsonMessage}
-        globalPlaybackTime={globalPlaybackTime}
-      />
+    <div className="Room">
+      <div className="container text-center">
+        <div className="d-flex justify-content-center">
+          <div className="p-1">
+            <Video
+              sendJsonMessage={sendJsonMessage}
+              globalPlaybackTime={globalPlaybackTime}
+            />
+          </div>
+          <div className="p-1">
+            <Chat
+              messages={messages}
+              sendJsonMessage={sendJsonMessage}
+              connectionStatus={connectionStatus}
+              readyState={readyState}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

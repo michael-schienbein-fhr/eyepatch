@@ -9,7 +9,7 @@ const {
   UnauthorizedError,
 } = require("../expressError");
 
-const { BCRYPT_WORK_FACTOR } = require("../config.js");
+const { BCRYPT_WF } = require("../config.js");
 
 /** Related functions for rooms. */
 
@@ -25,29 +25,28 @@ class Room {
     // try to find the room first
     const result = await db.query(
       `SELECT id,
-                  password,
-                  room_owner AS "roomOwner",
-                  room_name AS "roomName",
-                  room_members AS "roomMembers",
-                  video_queue AS "videoQueue",
-                  created_at,
-           FROM rooms
-           WHERE room_name = $1`,
+                room_owner AS "roomOwner",
+                room_name AS "roomName",
+                password,
+                room_members AS "roomMembers",
+                video_queue AS "videoQueue",
+                created_at
+          FROM rooms
+          WHERE id = $1`,
       [id],
     );
 
     const room = result.rows[0];
-
     if (room) {
       // compare hashed password to a new hash from password
-      const isValid = await bcrypt.compare(password, room.password);
+      const isValid = await bcrypt.compare(password, room.password.toString());
       if (isValid === true) {
         delete room.password;
         return room;
       }
     }
 
-    throw new UnauthorizedError("Invalid Room ID/password");
+    throw new UnauthorizedError("Invalid Room Password");
   };
 
   /** Create room with data.
@@ -77,10 +76,9 @@ class Room {
       password = null;
       hasPass = false;
     };
-    
+
     if (password !== null) {
-      debugger
-      hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+      hashedPassword = await bcrypt.hash(password, BCRYPT_WF);
       hasPass = true;
     };
 
@@ -198,7 +196,7 @@ class Room {
   // UPDATE THIS
   static async update(username, data) {
     if (data.password) {
-      data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
+      data.password = await bcrypt.hash(data.password, BCRYPT_WF);
     }
 
     const { setCols, values } = sqlForPartialUpdate(

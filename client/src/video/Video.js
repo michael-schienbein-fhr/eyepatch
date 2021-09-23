@@ -1,3 +1,4 @@
+import './Youtube.css';
 import YouTube from "react-youtube";
 import { useState, useEffect, useRef } from "react";
 import useDidMountEffect from '../hooks/useDidMountEffect';
@@ -11,12 +12,13 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   const onReady = (e) => {
     console.log(`YouTube Player object for videoId: "${videoId}" has been saved to state.`);
     setPlayer(e.target);
+
     console.log(player);
   }
   // useEffect(() => {
   //   if (player !== null) {
   //     timer.current = setTimeout(() => {
-        
+
   //       player.seekTo(globalPlaybackTime);
   //     }, 500);
   //   }
@@ -25,7 +27,7 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   //     clearTimeout(timer.current);
   //   };
   // }, [globalPlaybackTime])
-  
+
   useDidMountEffect(() => {
     // react please run me if 'key' changes, but not on initial render
     console.log("updated player target");
@@ -33,7 +35,7 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   // if (videoUrl) {
   //   videoCode = videoUrl.split("v=")[1].split("&")[0];
   // }
-  
+
   const onStateChange = (e) => {
     // console.log(e.target.playerInfo);
 
@@ -61,7 +63,7 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
       {/* <input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} /> */}
       <YouTube
         videoId={videoId}
-        containerClassName="embed embed-youtube"
+        containerClassName="Youtube"
         onStateChange={onStateChange}
         onReady={onReady}
         opts={opts}

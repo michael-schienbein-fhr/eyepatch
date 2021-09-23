@@ -13,7 +13,7 @@ CREATE TABLE rooms (
   room_owner VARCHAR(25) NOT NULL
     REFERENCES users,
   room_name VARCHAR(30) NOT NULL,
-  password VARCHAR(30),
+  password TEXT,
   has_pass BOOLEAN NOT NULL,
   room_members VARCHAR(25),
   video_queue VARCHAR(25),

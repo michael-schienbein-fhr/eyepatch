@@ -18,9 +18,16 @@ const { UnauthorizedError } = require("../expressError");
 function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
+    console.debug(authHeader);
+
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      res.locals.user = jwt.verify(token, SECRET_KEY);
+      const decoded = jwt.decode(token)
+      if (decoded.type === "user") {
+        res.locals.user = jwt.verify(token, SECRET_KEY)
+      } else {
+        res.locals.room = jwt.verify(token, SECRET_KEY)
+      }
     }
     return next();
   } catch (err) {
@@ -77,10 +84,19 @@ function ensureCorrectUserOrAdmin(req, res, next) {
   }
 }
 
+function ensureRoomLoggedIn(req, res, next) {
+  try {
+    if (!res.locals.room) throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
   ensureCorrectUserOrAdmin,
+  ensureRoomLoggedIn
 };

@@ -5,9 +5,10 @@ const { SECRET_KEY } = require("../config");
 
 function createUserToken(user) {
   console.assert(user.isAdmin !== undefined,
-      "createToken passed user without isAdmin property");
+    "createToken passed user without isAdmin property");
 
   let payload = {
+    type: "user",
     username: user.username,
     isAdmin: user.isAdmin || false,
   };
@@ -21,13 +22,16 @@ function createRoomToken(room) {
   const passFlag = room.password ? true : false;
 
   let payload = {
+    type: "room",
     id: room.id,
     roomOwner: room.roomOwner,
     roomName: room.roomName,
-    passFlag 
+    passFlag
   };
 
-  return jwt.sign(payload, SECRET_KEY);
+  let signed = jwt.sign(payload, SECRET_KEY);
+
+  return signed;
 }
 
 module.exports = { createUserToken, createRoomToken };
