@@ -19,7 +19,7 @@ function createUserToken(user) {
 function createRoomToken(room) {
   // console.assert(room.password !== undefined,
   //     "createRoomToken passed new room without password property");
-  const passFlag = room.password ? true : false;
+  const passFlag = (room.haspass) ? true : false;
 
   let payload = {
     type: "room",
@@ -28,7 +28,8 @@ function createRoomToken(room) {
     roomName: room.roomName,
     passFlag
   };
-
+  // console.debug(room, "WHAT THE FUCK")
+  // console.debug(payload, "PLEASE OH GOD");
   let signed = jwt.sign(payload, SECRET_KEY);
 
   return signed;

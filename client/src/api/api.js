@@ -15,14 +15,13 @@ class EyepatchApi {
   static userToken;
   static roomToken;
 
-  static async request(endpoint, data = {}, method = "get", type) {
-    console.debug("API Call:", endpoint, data, method, type);
-
+  static async request(endpoint, data = {}, method = "get") {
+    console.debug("API Call:", endpoint, data, method);
     const url = `${BASE_URL}/${endpoint}`;
 
-    const headers = (type === "user")
+    const headers = (EyepatchApi.roomToken === "undefined")
       ? { Authorization: `Bearer ${EyepatchApi.userToken}` }
-      : { Authorization: `Bearer ${EyepatchApi.roomToken}` };
+      : { Authorization: `Bearer ${EyepatchApi.userToken},${EyepatchApi.roomToken}` };
 
     const params = (method === "get")
       ? data
@@ -49,28 +48,28 @@ class EyepatchApi {
   /** Signup for site. */
 
   static async signup(data) {
-    let res = await this.request(`auth/register`, data, "post", "user");
+    let res = await this.request(`auth/register`, data, "post");
     return res.userToken;
   }
 
   /** Get token for login from username, password. */
 
   static async joinRoom(data) {
-    let res = await this.request(`auth/token/room`, data, "post", "room");
-    return res.room;
+    let res = await this.request(`auth/token/room`, data, "post");
+    return res.roomToken;
   }
 
   /** Create new room. */
 
   static async createRoom(data) {
-    let res = await this.request(`auth/create`, data, "post", "room");
+    let res = await this.request(`auth/create`, data, "post");
     return res.roomToken;
   };
 
   /** Get the current user. */
 
   static async getCurrentUser(username) {
-    let res = await this.request(`users/${username}`, {}, "get", "user");
+    let res = await this.request(`users/${username}`, {}, "get");
     return res.user;
   }
 
@@ -83,7 +82,12 @@ class EyepatchApi {
   // /** Get room by id */
 
   static async getRoom(id) {
-    let res = await this.request(`rooms/${id}`);
+    let res = await this.request(`rooms/${id}`, {}, "get");
+    return res.room;
+  }
+
+  static async getPrivateRoom(id) {
+    let res = await this.request(`rooms/private/${id}`, {}, "get");
     return res.room;
   }
 
@@ -93,28 +97,6 @@ class EyepatchApi {
     let res = await this.request("rooms/newest");
     return res.room;
   }
-
-  // /** Get all */
-
-  // static async getCompany(handle) {
-  //   let res = await this.request(`companies/${handle}`);
-  //   return res.company;
-  // }
-
-  // /** Get list of jobs (filtered by title if not undefined) */
-
-  // static async getJobs(title) {
-  //   let res = await this.request("jobs", { title });
-  //   return res.jobs;
-  // }
-
-  // /** Apply to a job */
-
-  // static async applyToJob(username, id) {
-  //   await this.request(`users/${username}/jobs/${id}`, {}, "post");
-  // }
-
-
 
   // /** Save user profile page. */
 

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import RoomLoginForm from "./RoomLoginForm";
 
 
 /** Show limited information about a company
@@ -10,13 +9,13 @@ import RoomLoginForm from "./RoomLoginForm";
  */
 
 function RoomCard({ id, roomName, hasPass}) {
-  // console.debug("CompanyCard", logoUrl);
+
 
   return (
     <div>
       {hasPass === true ?
         (<Link className="CompanyCard card"
-        to={`/rooms/${id}/login`}>
+        to={`/rooms/private/${id}/login`}>
           <div className="card-body">
             <h6 className="card-title">
               {roomName}
@@ -42,6 +41,3 @@ function RoomCard({ id, roomName, hasPass}) {
 
 export default RoomCard;
 
-// {logoUrl && <img src={}
-//                              alt={roomName}
-//                              className="float-right ml-5" />}

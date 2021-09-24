@@ -9,7 +9,8 @@ import Room from "../room/Room";
 import PrivateRoute from "./PrivateRoute";
 import CreateRoomForm from "../room/CreateRoomForm";
 import RoomLoginForm from "../room/RoomLoginForm";
-
+import PrivateRoomRoute from "./PrivateRoomRoute";
+// import UserContext from "../auth/UserContext";
 /** Site-wide routes.
  *
  * Parts of site should only be visitable when logged in. Those routes are
@@ -46,13 +47,13 @@ function Routes({ login, signup, joinRoom, createRoom }) {
         <PrivateRoute exact path="/rooms/create">
           <CreateRoomForm createRoom={createRoom} />
         </PrivateRoute>
-        <PrivateRoute exact path="/rooms/:id/login">
-          <RoomLoginForm joinRoom={joinRoom}/>
+        <PrivateRoute exact path="/rooms/private/:id/login">
+          <RoomLoginForm joinRoom={joinRoom} />
         </PrivateRoute>
-        <PrivateRoute exact path="/rooms/:id">
+        <PrivateRoomRoute exact path="/rooms/private/:id">
           <Room />
-        </PrivateRoute>
-        <PrivateRoute exact path="/rooms/:id/private">
+        </PrivateRoomRoute>
+        <PrivateRoute exact path="/rooms/:id">
           <Room />
         </PrivateRoute>
 

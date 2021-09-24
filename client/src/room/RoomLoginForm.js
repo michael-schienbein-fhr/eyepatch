@@ -40,7 +40,8 @@ function RoomLoginForm({ joinRoom }) {
     evt.preventDefault();
     let result = await joinRoom(formData);
     if (result.success) {
-      history.push("/rooms/:id/private");
+
+      history.push(`/rooms/private/${id}`);
     } else {
       setFormErrors(result.errors);
     }

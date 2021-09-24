@@ -19,14 +19,15 @@ function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
     console.debug(authHeader);
-
     if (authHeader) {
-      const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      const decoded = jwt.decode(token)
+      const tokens = authHeader.replace(/^[Bb]earer /, "").trim().split(",");
+      console.debug(tokens)
+      const decoded = jwt.decode(tokens[0])
+      console.debug(decoded);
       if (decoded.type === "user") {
-        res.locals.user = jwt.verify(token, SECRET_KEY)
+        res.locals.user = jwt.verify(tokens[0], SECRET_KEY)
       } else {
-        res.locals.room = jwt.verify(token, SECRET_KEY)
+        res.locals.room = jwt.verify(tokens[0], SECRET_KEY)
       }
     }
     return next();

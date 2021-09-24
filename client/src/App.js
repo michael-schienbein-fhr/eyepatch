@@ -30,12 +30,14 @@ export const ROOM_TOKEN_STORAGE_ID = "eyepatch-room-token";
 function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentRoom, setCurrentRoom] = useState(null);
   const [userToken, setUserToken] = useLocalStorage(USER_TOKEN_STORAGE_ID);
   const [roomToken, setRoomToken] = useLocalStorage(ROOM_TOKEN_STORAGE_ID);
   console.debug(
     "App",
     "infoLoaded=", infoLoaded,
     "currentUser=", currentUser,
+    "currentRoom=", currentRoom,
     "userToken=", userToken,
     "roomToken=", roomToken
   );
@@ -44,25 +46,9 @@ function App() {
   // this should not run. It only needs to re-run when a user logs out, so
   // the value of the user token is a dependency for this effect.
 
-  useEffect(function loadInfo() {
-    console.debug("App useEffect loadUserInfo", "userToken=", userToken, "roomToken=", roomToken);
 
-    async function getRoomInfo() {
-      if (roomToken) {
-        try {
-          
-          // put the token on the Api class so it can use it to call the API.
-          EyepatchApi.roomToken = roomToken;
-          // let currentRoom = await EyepatchApi.getRoom(id);
-          // setCurrentRoom(currentRoom);
-        } catch (err) {
-          console.error("App loadUserInfo: problem loading", err);
-          setCurrentUser(null);
-        }
-      }
-      setInfoLoaded(true);
-    }
-
+  useEffect(function loadUserInfo() {
+    console.debug("App useEffect loadUserInfo", "userToken=", userToken);
     async function getCurrentUser() {
       if (userToken) {
         try {
@@ -85,8 +71,33 @@ function App() {
     // to false to control the spinner.
     setInfoLoaded(false);
     getCurrentUser();
+  }, [userToken]);
+
+  useEffect(function loadRoomInfo() {
+    console.debug("App useEffect loadUserInfo", "roomToken=", roomToken);
+
+    async function getRoomInfo() {
+      if (roomToken) {
+        try {
+          let { id } = jwt.decode(roomToken);
+
+          // put the token on the Api class so it can use it to call the API.
+          EyepatchApi.roomToken = roomToken;
+          let currentRoom = await EyepatchApi.getRoom(id);
+          setCurrentRoom(currentRoom);
+        } catch (err) {
+          console.error("App loadUserInfo: problem loading", err);
+          setCurrentUser(null);
+        }
+      }
+      setInfoLoaded(true);
+    }
+    // set infoLoaded to false while async getCurrentUser runs; once the
+    // data is fetched (or even if an error happens!), this will be set back
+    // to false to control the spinner.
+    setInfoLoaded(false);
     getRoomInfo();
-  }, [userToken, roomToken]);
+  }, [roomToken]);
 
   /** Handles site-wide logout. */
   function logout() {
@@ -135,9 +146,8 @@ function App() {
    */
   async function joinRoom(roomData) {
     try {
-      let token = await EyepatchApi.joinRoom(roomData);
-      // this will need a callback using rest
-      setRoomToken(token);
+      let roomToken = await EyepatchApi.joinRoom(roomData);
+      setRoomToken(roomToken);
       return { success: true };
     } catch (errors) {
       console.error("Failed to join room", errors);
@@ -151,12 +161,9 @@ function App() {
    */
   async function createRoom(roomData) {
     try {
-      let token = await EyepatchApi.createRoom(roomData);
-      // let newRoomData = Object.values(token);
-      console.debug(token, "THIS IS THE NEW ROOM DATA");
-      setRoomToken(token)
-      // console.debug(roomToken);
-      return { success: true };
+      let roomToken = await EyepatchApi.createRoom(roomData);
+      setRoomToken(roomToken)
+      return { success: true, roomToken };
     } catch (errors) {
       console.error("Room creation failed", errors);
       return { success: false, errors };
@@ -169,7 +176,7 @@ function App() {
   return (
     <BrowserRouter>
       <UserContext.Provider
-        value={{ currentUser, setCurrentUser }}>
+        value={{ currentUser, setCurrentUser, currentRoom, setCurrentRoom }}>
         <div className="App">
           <Navigation logout={logout} />
           <Routes login={login} signup={signup} createRoom={createRoom} joinRoom={joinRoom} />

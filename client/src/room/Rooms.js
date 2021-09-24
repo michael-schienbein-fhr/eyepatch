@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import SearchForm from "../common/SearchForm";
 import EyepatchApi from "../api/api";
 import RoomCard from "./RoomCard";
@@ -15,7 +15,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
  * Routes -> { CompanyCard, SearchForm }
  */
 
-const Rooms = ({joinRoom}) => {
+const Rooms = ({ joinRoom }) => {
   console.debug("Rooms");
 
   const [rooms, setRooms] = useState(null);
@@ -25,8 +25,8 @@ const Rooms = ({joinRoom}) => {
     search();
   }, []);
 
-  const redirect = () =>{ 
-    let path = `/rooms/create`; 
+  const redirect = () => {
+    let path = `/rooms/create`;
     history.push(path);
   }
   /** Triggered by search form submit; reloads rooms. */
@@ -34,9 +34,9 @@ const Rooms = ({joinRoom}) => {
     let rooms = await EyepatchApi.getRooms();
     setRooms(rooms);
   }
-  
+
   if (!rooms) return <LoadingSpinner />;
-  
+
   // console.log(rooms);
   return (
     <div className="Rooms col-md-8 offset-md-2">

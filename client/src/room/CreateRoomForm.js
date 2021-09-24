@@ -3,6 +3,8 @@ import { useHistory } from "react-router-dom";
 import Alert from "../common/Alert";
 import UserContext from "../auth/UserContext";
 import EyepatchApi from "../api/api";
+import jwt from "jsonwebtoken";
+
 /** Signup form.
  *
  * Shows form and manages update to state on changes.
@@ -30,7 +32,6 @@ function CreateRoomForm({ createRoom }) {
       try {
         let newRoom = await EyepatchApi.getNewest();
         setNewRoomId(newRoom.id);
-        console.debug(newRoomId)
       } catch (err) {
         console.error("App getRoomId: problem loading", err);
       }
@@ -39,25 +40,27 @@ function CreateRoomForm({ createRoom }) {
     getRoomId();
     setFormData(d => ({ ...d, room_owner: currentUser.username }));
   }, []);
-  
+
   // console.debug(
-    //     "SignupForm",
-    //     "signup=", typeof signup,
-    //     "formData=", formData,
-    //     "formErrors=", formErrors,
-    // );
-    
-    /** Handle form submit:
-   *
-   * Calls login func prop and, if successful, redirect to /companies.
-   */
-  
+  //     "SignupForm",
+  //     "signup=", typeof signup,
+  //     "formData=", formData,
+  //     "formErrors=", formErrors,
+  // );
+
+  /** Handle form submit:
+ *
+ * Calls login func prop and, if successful, redirect to /companies.
+ */
+
   async function handleSubmit(evt) {
     evt.preventDefault();
     let result = await createRoom(formData);
-    console.debug(result);
-    if (result.success) {
+    let { passFlag } = jwt.decode(result.roomToken);
+    if (result.success && passFlag === false) {
       history.push(`/rooms/${newRoomId + 1}`);
+    } else if (result.success && passFlag === true) {
+      history.push(`/rooms/private/${newRoomId + 1}`);
     } else {
       setFormErrors(result.errors);
     }
