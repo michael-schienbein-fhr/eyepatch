@@ -1,5 +1,6 @@
-.Youtube {
-  height: 640px;
-  width: 1137.78px;
-
+@media screen and (max-width: 480px) {
+  .Youtube {
+    height: 100px;
+    width: 300px;
+  }
 }

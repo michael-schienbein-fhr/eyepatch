@@ -1,5 +1,5 @@
 import './Room.css';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import Chat from '../chat/Chat';
@@ -14,13 +14,12 @@ const Room = () => {
   const { currentUser } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState("");
-  const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
+  const globalPlaybackTime = useRef(null);
+  // const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
   const { id } = useParams();
-  const changeUsername = () => {
+  useEffect(function changeUsername() {
     setUsername(currentUser.username);
-  };
-
-  useEffect(changeUsername, []);
+  }, []);
 
   const wsURL = `${WEBSOCKET_BASE}/room/${id}`;
 
@@ -35,8 +34,8 @@ const Room = () => {
     // console.log(message.type)
     if (message.type === 'chat') {
       setMessages((_messages) => [..._messages, message]);
-    } else if (message.type === 'video') {
-      setGlobalPlaybackTime(message.time);
+    } else if (message.type === 'time') {
+      globalPlaybackTime.current = message.time;
     }
   };
 

@@ -1,6 +1,6 @@
 /** Chat rooms that can be joined/left/broadcast to. */
 
-// in-memory storage of roomNames -> room
+// in-memory storage of roomIds -> room
 
 const ROOMS = new Map();
 
@@ -17,19 +17,20 @@ class Room {
    * them, the Room class manages all of this stuff for them.
    **/
 
-  static get(roomName) {
-    if (!ROOMS.has(roomName)) {
-      ROOMS.set(roomName, new Room(roomName));
+  static get(roomId) {
+    if (!ROOMS.has(roomId)) {
+      ROOMS.set(roomId, new Room(roomId));
     }
 
-    return ROOMS.get(roomName);
+    return ROOMS.get(roomId);
   }
 
   /** make a new room, starting with empty set of listeners */
 
-  constructor(roomName) {
-    this.name = roomName;
+  constructor(roomId) {
+    this.id = roomId;
     this.members = new Set();
+    this.videos = new Set();
   }
 
   /** member joining a room. */
@@ -37,11 +38,22 @@ class Room {
   join(member) {
     this.members.add(member);
   }
-
+  
   /** member leaving a room. */
-
+  
   leave(member) {
     this.members.delete(member);
+  }
+  
+  /** add video to queue. */
+
+  add(video) {
+    this.videos.add(video);
+  }
+  /** add video to queue. */
+
+  remove(video) {
+    this.videos.delete(video);
   }
 
   /** send message to all members in a room. */

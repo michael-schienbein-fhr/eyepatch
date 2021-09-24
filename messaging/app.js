@@ -25,11 +25,11 @@ const ChatUser = require('./ChatUser');
  * The `ws.send` method is how we'll send messages back to that socket.
  */
 
-app.ws('/room/:roomName', function (ws, req, next) {
+app.ws('/room/:roomId', function (ws, req, next) {
   try {
     const user = new ChatUser(
       ws.send.bind(ws), // fn to call to message this user
-      req.params.roomName // name of room for user
+      req.params.roomId // name of room for user
     );
 
     // register handlers for message-received, connection-closed
@@ -53,16 +53,5 @@ app.ws('/room/:roomName', function (ws, req, next) {
     console.error(err);
   }
 });
-
-/** serve homepage --- just static HTML
- *
- * Allow any roomName to come after homepage --- client JS will find the
- * roomname in the URL.
- *
- * */
-
-// app.get('/', function (req, res, next) {
-//   res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-// });
 
 module.exports = app;

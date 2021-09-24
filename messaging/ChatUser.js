@@ -8,12 +8,12 @@ const Room = require('./Room');
 class ChatUser {
   /** make chat: store connection-device, rooom */
 
-  constructor(send, roomName) {
+  constructor(send, roomId) {
     this._send = send; // "send" function for this user
-    this.room = Room.get(roomName); // room user will be in
+    this.room = Room.get(roomId); // room user will be in
     this.username = null; // becomes the username of the visitor
 
-    console.log(`created chat in room: ${this.room.name}`);
+    console.log(`created chat in room: ${this.room.id}`);
   }
 
   /** send msgs to this client using underlying connection-send-function */
@@ -33,7 +33,7 @@ class ChatUser {
     this.room.join(this);
     this.room.broadcast({
       type: 'note',
-      text: `${this.username} joined "${this.room.name}".`
+      text: `${this.username} joined "${this.room.id}".`
     });
   }
 
@@ -47,9 +47,20 @@ class ChatUser {
     });
   }
 
-  handleVideo(time){
+  handleVideoId(videoId) {
+    // console.debug(videoId);
+    this.videoId = videoId;
+    // if(videoId.action ===)
+    this.room.add(this);
     this.room.broadcast({
-      type: 'video',
+      type: 'videoId',
+      text: `${this.videoId} added to queue in: "${this.room.id}".`
+    });
+  }
+
+  handleTime(time) {
+    this.room.broadcast({
+      type: 'time',
       time: time
     });
   }
@@ -63,7 +74,8 @@ class ChatUser {
     let msg = JSON.parse(jsonData);
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
-    else if (msg.type === 'video') this.handleVideo(msg.time);
+    else if (msg.type === 'time') this.handleTime(msg.time);
+    else if (msg.type === 'videoId') this.handleVideoId(msg.videoId);
     else throw new Error(`bad message: ${msg.type}`);
   }
 
@@ -73,7 +85,7 @@ class ChatUser {
     this.room.leave(this);
     this.room.broadcast({
       type: 'note',
-      text: `${this.username} left ${this.room.name}.`
+      text: `${this.username} left ${this.room.id}.`
     });
   }
 }
