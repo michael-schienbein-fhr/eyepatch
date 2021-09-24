@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 
 const express = require("express");
-const { ensureCorrectUserOrAdmin, ensureAdmin, ensureRoomLoggedIn } = require("../middleware/auth");
+const { ensureCorrectUserOrAdmin, ensureAdmin, ensureRoomLoggedIn, ensureLoggedIn } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const Room = require('../models/room');
 const { createRoomToken } = require("../helpers/tokens");
@@ -85,7 +85,7 @@ router.get("/newest", async function (req, res, next) {
  * Authorization required: admin or same user-as-:username
  **/
 
-router.get("/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+router.get("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
     const room = await Room.get(req.params.id);
     return res.json({ room });

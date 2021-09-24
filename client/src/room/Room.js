@@ -68,7 +68,7 @@ const Room = () => {
 
   return (
     <div className="Room">
-      <div className="container text-center">
+      <div className="container">
         <div className="d-flex justify-content-center">
           <div className="p-1">
             <Video

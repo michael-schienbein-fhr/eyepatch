@@ -47,15 +47,15 @@ function Routes({ login, signup, joinRoom, createRoom }) {
         <PrivateRoute exact path="/rooms/create">
           <CreateRoomForm createRoom={createRoom} />
         </PrivateRoute>
+        <PrivateRoute exact path="/rooms/:id">
+          <Room />
+        </PrivateRoute>
         <PrivateRoute exact path="/rooms/private/:id/login">
           <RoomLoginForm joinRoom={joinRoom} />
         </PrivateRoute>
         <PrivateRoomRoute exact path="/rooms/private/:id">
           <Room />
         </PrivateRoomRoute>
-        <PrivateRoute exact path="/rooms/:id">
-          <Room />
-        </PrivateRoute>
 
         <Redirect to="/" />
       </Switch>

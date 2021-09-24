@@ -1,4 +1,4 @@
-import './Youtube.css';
+// import './Youtube.css';
 import YouTube from "react-youtube";
 import { useState, useEffect, useRef } from "react";
 import useDidMountEffect from '../hooks/useDidMountEffect';
@@ -53,10 +53,12 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   //   // console.log('ready')
   // }
   const opts = {
+    height: '640',
+    width: '1137.78',
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
-      autoplay: 1
-    }
+      autoplay: 1,
+    },
   };
   return (
     <div>
