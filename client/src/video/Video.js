@@ -15,14 +15,20 @@ const Video = ({ sendJsonMessage, globalPlaybackTime, globalPlayerState }) => {
     // console.debug("effect")
     console.debug('\nOther user has updated time and state\n', 'time:', globalPlaybackTime, 'state:', globalPlayerState);
     if (player) {
+      if (globalPlayerState === 'play') {
+        console.log("Play!");
+        console.log(player.getPlayerState());
+        player.playVideo();
+      };
       if (globalPlayerState === 'pause') {
+        console.log("Pause!");
+        console.log(player.getPlayerState());
+        // player.seekTo(globalPlaybackTime);
         player.pauseVideo();
       };
-      if (globalPlayerState === 'play') {
-        player.playVideo();
-        // player.seekTo(globalPlaybackTime);
-      };
       if (globalPlayerState === 'seek') {
+        console.log("Seek!");
+        console.log(player.getPlayerState());
         player.seekTo(globalPlaybackTime);
       };
     };
@@ -35,27 +41,25 @@ const Video = ({ sendJsonMessage, globalPlaybackTime, globalPlayerState }) => {
 
   const onStateChange = (e) => {
     setPlaybackTime(player.getCurrentTime());
-
     handleStateChange(e)
   };
 
   const handleStateChange = (e) => handleEvent(e);
   const handlePlay = () => {
-    console.log("Play!");
+    // console.log("Play!");
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "play" });
   };
   const handlePause = () => {
-    console.log("Pause!");
+    // console.log("Pause!");
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "pause" });
   };
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
-    console.log("Seek!")
-    // console.debug(player, 'Player object');
+    // console.log("Seek!");
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "seek" });
