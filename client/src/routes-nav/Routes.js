@@ -1,4 +1,5 @@
-import React from "react";
+// import {useContext} from "react";
+import { useContext } from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
 import Homepage from "../homepage/Homepage";
 import LoginForm from "../auth/LoginForm";
@@ -10,7 +11,8 @@ import PrivateRoute from "./PrivateRoute";
 import CreateRoomForm from "../room/CreateRoomForm";
 import RoomLoginForm from "../room/RoomLoginForm";
 import PrivateRoomRoute from "./PrivateRoomRoute";
-// import UserContext from "../auth/UserContext";
+import PrivateUserRoute from "./PrivateUserRoute";
+import UserContext from "../auth/UserContext";
 /** Site-wide routes.
  *
  * Parts of site should only be visitable when logged in. Those routes are
@@ -20,6 +22,7 @@ import PrivateRoomRoute from "./PrivateRoomRoute";
  */
 
 function Routes({ login, signup, joinRoom, createRoom }) {
+  // const { currentUser } = useContext(UserContext);
   console.debug(
     "Routes",
     `login=${typeof login}`,

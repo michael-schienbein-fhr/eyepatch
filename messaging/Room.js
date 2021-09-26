@@ -38,13 +38,13 @@ class Room {
   join(member) {
     this.members.add(member);
   }
-  
+
   /** member leaving a room. */
-  
+
   leave(member) {
     this.members.delete(member);
   }
-  
+
   /** add video to queue. */
 
   add(video) {
@@ -57,6 +57,20 @@ class Room {
   }
 
   /** send message to all members in a room. */
+  // exclude self
+  broadcastExclusive(data) {
+
+    for (let member of this.members) {
+      // console.debug(member.username);
+      if (member.username !== data.username) {
+        // console.debug(member.username);
+        console.debug('sent to: ', member.username, data);
+        member.send(JSON.stringify(data));
+      }
+    }
+  }
+
+  // /** send message to all members in a room. */
 
   broadcast(data) {
     for (let member of this.members) {

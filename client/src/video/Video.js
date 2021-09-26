@@ -6,7 +6,7 @@ import useDidMountEffect from '../hooks/useDidMountEffect';
 const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   const [player, setPlayer] = useState(null);
   const [videoId, setVideoId] = useState("M7lc1UVf-VE")
-  const playbackPosition = useRef(null);
+  const [playbackTime, setPlaybackTime] = useState(null)
   const onReady = (e) => {
     console.log(`YouTube Player object for videoId: "${videoId}" has been saved to state.`);
     setPlayer(e.target);
@@ -16,14 +16,7 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   }
   // useEffect(() => {
   //   if (player !== null) {
-  //     timer.current = setTimeout(() => {
-
-  //       player.seekTo(globalPlaybackTime);
-  //     }, 1000);
-  //   }
-  //   console.log('effect');
-  //   return () => {
-  //     clearTimeout(timer.current);
+  //     player.seekTo(globalPlaybackTime);
   //   };
   // }, [globalPlaybackTime])
 
@@ -37,16 +30,19 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
 
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
-
-  const handleStateChange = event => handleEvent(event.data);
+  const handleStateChange = (e) => handleEvent(e.data);
   const handlePlay = () => console.log("Play!");
   const handlePause = () => console.log("Pause!");
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
     console.log("Seek!")
-    playbackPosition.current = player.getCurrentTime();
-    sendJsonMessage({ type: "time", time: playbackPosition });
-    player.seekTo(globalPlaybackTime);
+    console.debug(globalPlaybackTime)
+    setPlaybackTime(player.getCurrentTime());
+    // globalPlaybackTime.current = playbackPosition;
+    // console.log(globalPlaybackTime, playbackPosition);
+    sendJsonMessage({ type: "time", time: playbackTime });
+    console.debug(globalPlaybackTime, 'THIS IS THE PLAYER TIME');
+    console.debug(playbackTime, 'this is the local time')
   };
 
   const isSubArrayEnd = (A, B) => {
@@ -81,8 +77,8 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   };
 
   const onStateChange = (e) => {
-    
-    
+
+
     handleStateChange(e)
     // console.log(e.target.playerInfo);
 
@@ -90,12 +86,11 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
     // console.log(currentTime);
     // playbackPosition.current = globalPlaybackTime;
     // console.debug(playbackPosition, "LOOK")
-    console.debug(player, 'THIS IS THE PLAYER');
-    console.debug(player.getPlayerState(), 'THIS IS THE PLAYER');
-    console.debug(globalPlaybackTime, 'THIS IS THE PLAYER TIME');
-
-
+    // console.debug(player, 'THIS IS THE PLAYER');
+    // console.debug(player.getPlayerState(), 'THIS IS THE PLAYER');
     
+
+
     // if (player.playerInfo.playerState === 3) {
     //   player.pauseVideo();
     //   player.playVideo();

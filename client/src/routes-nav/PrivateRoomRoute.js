@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Route, Redirect, useParams } from "react-router-dom";
 import UserContext from "../auth/UserContext";
-
+import useLocalStorage from "../hooks/useLocalStorage";
 /** "Higher-Order Component" for private routes.
  *
  * In routing component, use these instead of <Route ...>. This component
@@ -17,8 +17,9 @@ function PrivateRoomRoute({ exact, path, children }) {
     "exact=", exact,
     "path=", path,
     "currentRoom=", currentRoom,
-    // "id", id
-  );
+    
+    );
+    
 
   if (!currentRoom) {
     return <Redirect from="rooms/private/:id" to="/rooms/" />;

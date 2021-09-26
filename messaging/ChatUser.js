@@ -10,8 +10,8 @@ class ChatUser {
 
   constructor(send, roomId) {
     this._send = send; // "send" function for this user
-    this.room = Room.get(roomId); // room user will be in
     this.username = null; // becomes the username of the visitor
+    this.room = Room.get(roomId); // room user will be in
 
     console.log(`created chat in room: ${this.room.id}`);
   }
@@ -59,7 +59,8 @@ class ChatUser {
   }
 
   handleTime(time) {
-    this.room.broadcast({
+    this.room.broadcastExclusive({
+      username: this.username,
       type: 'time',
       time: time
     });
