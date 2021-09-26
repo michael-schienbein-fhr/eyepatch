@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 
 
 
-const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
+const Video = ({ sendJsonMessage, globalPlaybackTime, globalPlayerState }) => {
   const [playbackTime, setPlaybackTime] = useState(null);
   const [player, setPlayer] = useState(null);
   const [videoId, setVideoId] = useState("M7lc1UVf-VE")
@@ -13,11 +13,20 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
 
   useEffect(function () {
     // console.debug("effect")
-    console.debug(globalPlaybackTime, 'Other user has updated time');
+    console.debug('\nOther user has updated time and state\n', 'time:', globalPlaybackTime, 'state:', globalPlayerState);
     if (player) {
-      player.seekTo(globalPlaybackTime);
-    }
-  }, [globalPlaybackTime]);
+      if (globalPlayerState === 'pause') {
+        player.pauseVideo();
+      };
+      if (globalPlayerState === 'play') {
+        player.playVideo();
+        // player.seekTo(globalPlaybackTime);
+      };
+      if (globalPlayerState === 'seek') {
+        player.seekTo(globalPlaybackTime);
+      };
+    };
+  }, [globalPlaybackTime, globalPlayerState]);
 
   const onReady = (e) => {
     console.debug(`YouTube Player object has been saved to state.`);
@@ -31,15 +40,25 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   };
 
   const handleStateChange = (e) => handleEvent(e);
-  const handlePlay = () => console.log("Play!");
-  const handlePause = () => console.log("Pause!");
+  const handlePlay = () => {
+    console.log("Play!");
+    console.debug(playbackTime, 'Local user has updated time');
+    sendJsonMessage({ type: "time", time: playbackTime });
+    sendJsonMessage({ type: "playerState", state: "play" });
+  };
+  const handlePause = () => {
+    console.log("Pause!");
+    console.debug(playbackTime, 'Local user has updated time');
+    sendJsonMessage({ type: "time", time: playbackTime });
+    sendJsonMessage({ type: "playerState", state: "pause" });
+  };
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
     console.log("Seek!")
     // console.debug(player, 'Player object');
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
-
+    sendJsonMessage({ type: "playerState", state: "seek" });
 
   };
 

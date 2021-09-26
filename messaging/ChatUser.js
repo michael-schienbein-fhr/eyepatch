@@ -14,7 +14,7 @@ class ChatUser {
     this.room = Room.get(roomId); // room user will be in
 
     console.log(`created chat in room: ${this.room.id}`);
-  }
+  };
 
   /** send msgs to this client using underlying connection-send-function */
 
@@ -23,8 +23,8 @@ class ChatUser {
       this._send(data);
     } catch {
       // If trying to send to a user fails, ignore it
-    }
-  }
+    };
+  };
 
   /** handle joining: add to room members, announce join */
 
@@ -35,7 +35,7 @@ class ChatUser {
       type: 'note',
       text: `${this.username} joined "${this.room.id}".`
     });
-  }
+  };
 
   /** handle a chat: broadcast to room. */
 
@@ -45,7 +45,7 @@ class ChatUser {
       type: 'chat',
       text: text
     });
-  }
+  };
 
   handleVideoId(videoId) {
     // console.debug(videoId);
@@ -56,7 +56,7 @@ class ChatUser {
       type: 'videoId',
       text: `${this.videoId} added to queue in: "${this.room.id}".`
     });
-  }
+  };
 
   handleTime(time) {
     this.room.broadcastExclusive({
@@ -64,7 +64,15 @@ class ChatUser {
       type: 'time',
       time: time
     });
-  }
+  };
+
+  handlePlayerState(state) {
+    this.room.broadcastExclusive({
+      username: this.username,
+      type: 'playerState',
+      state: state
+    });
+  };
   /** Handle messages from client:
    *
    * - {type: "join", name: username} : join
@@ -76,6 +84,7 @@ class ChatUser {
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else if (msg.type === 'time') this.handleTime(msg.time);
+    else if (msg.type === 'playerState') this.handlePlayerState(msg.state);
     else if (msg.type === 'videoId') this.handleVideoId(msg.videoId);
     else throw new Error(`bad message: ${msg.type}`);
   }

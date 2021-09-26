@@ -14,8 +14,8 @@ const Room = () => {
   const { currentUser } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState("");
-  // const globalPlaybackTime = useRef(null);
   const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
+  const [globalPlayerState, setGlobalPlayerState] = useState(null);
   const { id } = useParams();
   useEffect(function changeUsername() {
     setUsername(currentUser.username);
@@ -37,7 +37,9 @@ const Room = () => {
     } else if (message.type === 'time') {
       // globalPlaybackTime.current = message.time;
       setGlobalPlaybackTime(message.time);
-    };
+    } else if (message.type === 'playerState'){
+      setGlobalPlayerState(message.state);
+    }
   };
 
 
@@ -74,6 +76,7 @@ const Room = () => {
             <Video
               sendJsonMessage={sendJsonMessage}
               globalPlaybackTime={globalPlaybackTime}
+              globalPlayerState={globalPlayerState}
             />
           </div>
           <div className="p-1">
