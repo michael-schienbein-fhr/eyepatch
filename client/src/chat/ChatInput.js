@@ -1,7 +1,7 @@
 import './ChatInput.css';
 import {useState} from 'react';
 
-const ChatInput = ({sendJsonMessage, connectionStatus, readyState}) => {
+const ChatInput = ({sendJsonMessage, connectionStatus}) => {
   const [chatMsg, setChatMsg] = useState("");
 
   const handleSubmit = (e) => {
@@ -15,7 +15,7 @@ const ChatInput = ({sendJsonMessage, connectionStatus, readyState}) => {
   const handleChange = (e) => {
     setChatMsg(e.target.value);
   };
-  console.log(readyState)
+
   return (
     <div>
       <span>The WebSocket is currently {connectionStatus}</span>

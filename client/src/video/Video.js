@@ -3,33 +3,40 @@ import YouTube from "react-youtube";
 import { useState, useEffect, useRef } from "react";
 
 
+
 const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   const [playbackTime, setPlaybackTime] = useState(null);
   const [player, setPlayer] = useState(null);
   const [videoId, setVideoId] = useState("M7lc1UVf-VE")
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
+
+  useEffect(function () {
+    console.debug(globalPlaybackTime,'Other user has updated time')
+  }, [globalPlaybackTime]);
+
   const onReady = (e) => {
     console.debug(`YouTube Player object has been saved to state.`);
     setPlayer(e.target);
   };
 
   const onStateChange = (e) => {
-    console.debug(player);
+    setPlaybackTime(player.getCurrentTime());
+
     handleStateChange(e)
-
-    
-
   };
 
-  const handleStateChange = (e) => handleEvent(e.data);
+  const handleStateChange = (e) => handleEvent(e);
   const handlePlay = () => console.log("Play!");
   const handlePause = () => console.log("Pause!");
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
     console.log("Seek!")
-    setPlaybackTime(player.getCurrentTime());
+    // console.debug(player, 'Player object');
+    console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
+
+    // player.seekTo(globalPlaybackTime);
   };
 
   const isSubArrayEnd = (A, B) => {
@@ -44,18 +51,18 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
     return true;
   };
 
-  const handleEvent = type => {
+  const handleEvent = (e) => {
     // Update sequence with current state change event
-    setSequence([...sequence, type]);
-    if (type === 1 && isSubArrayEnd(sequence, [3]) && !sequence.includes(-1)) {
+    setSequence([...sequence, e.data]);
+    if (e.data === 1 && isSubArrayEnd(sequence, [3]) && !sequence.includes(-1)) {
       handleSeek(); // Arrow keys seek
       setSequence([]); // Reset event sequence
     } else {
       clearTimeout(timer); // Cancel previous event
-      if (type !== 3) { // If we're not buffering,
+      if (e.data !== 3) { // If we're not buffering,
         let timeout = setTimeout(function () { // Start timer
-          if (type === 1) handlePlay();
-          else if (type === 2) handlePause();
+          if (e.data === 1) handlePlay();
+          else if (e.data === 2) handlePause();
           setSequence([]); // Reset event sequence
         }, 250);
         setTimer(timeout);

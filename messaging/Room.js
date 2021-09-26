@@ -59,7 +59,7 @@ class Room {
   /** send message to all members in a room. */
   // exclude self
   broadcastExclusive(data) {
-
+    console.debug(data);
     for (let member of this.members) {
       // console.debug(member.username);
       if (member.username !== data.username) {
@@ -73,6 +73,7 @@ class Room {
   // /** send message to all members in a room. */
 
   broadcast(data) {
+    console.debug(data);
     for (let member of this.members) {
       member.send(JSON.stringify(data));
     }
