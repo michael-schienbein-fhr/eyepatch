@@ -12,7 +12,11 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
   const [timer, setTimer] = useState(null);
 
   useEffect(function () {
-    console.debug(globalPlaybackTime,'Other user has updated time')
+    // console.debug("effect")
+    console.debug(globalPlaybackTime, 'Other user has updated time');
+    if (player) {
+      player.seekTo(globalPlaybackTime);
+    }
   }, [globalPlaybackTime]);
 
   const onReady = (e) => {
@@ -36,7 +40,7 @@ const Video = ({ sendJsonMessage, globalPlaybackTime }) => {
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
 
-    // player.seekTo(globalPlaybackTime);
+
   };
 
   const isSubArrayEnd = (A, B) => {

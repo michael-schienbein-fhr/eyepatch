@@ -14,8 +14,8 @@ const Room = () => {
   const { currentUser } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState("");
-  const globalPlaybackTime = useRef(null);
-  // const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
+  // const globalPlaybackTime = useRef(null);
+  const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
   const { id } = useParams();
   useEffect(function changeUsername() {
     setUsername(currentUser.username);
@@ -30,14 +30,14 @@ const Room = () => {
 
   const onMessage = (e) => {
     // console.log('message', e.data);
-    console.debug(e.data)
+    // console.debug(e.data)
     const message = JSON.parse(e.data);
-    
     if (message.type === 'chat') {
       setMessages((_messages) => [..._messages, message]);
     } else if (message.type === 'time') {
-      globalPlaybackTime.current = message.time;
-    }
+      // globalPlaybackTime.current = message.time;
+      setGlobalPlaybackTime(message.time);
+    };
   };
 
 
