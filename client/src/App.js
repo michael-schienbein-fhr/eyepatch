@@ -29,6 +29,7 @@ export const ROOM_TOKEN_STORAGE_ID = "eyepatch-room-token";
 
 function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
+  const [infoLoaded2, setInfoLoaded2] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentRoom, setCurrentRoom] = useState(null);
   const [userToken, setUserToken] = useLocalStorage(USER_TOKEN_STORAGE_ID);
@@ -90,12 +91,12 @@ function App() {
           setCurrentUser(null);
         }
       }
-      setInfoLoaded(true);
+      setInfoLoaded2(true);
     }
     // set infoLoaded to false while async getCurrentUser runs; once the
     // data is fetched (or even if an error happens!), this will be set back
     // to false to control the spinner.
-    setInfoLoaded(false);
+    setInfoLoaded2(false);
     getRoomInfo();
   }, [roomToken]);
 
@@ -171,7 +172,7 @@ function App() {
   }
 
 
-  if (!infoLoaded) return <LoadingSpinner />;
+  if (!infoLoaded || !infoLoaded2) return <LoadingSpinner />;
 
   return (
     <BrowserRouter>

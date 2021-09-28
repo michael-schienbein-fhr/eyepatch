@@ -49,13 +49,26 @@ class Room {
 
   add(video) {
     this.videos.add(video);
+    console.debug(this.video);
   }
   /** add video to queue. */
 
   remove(video) {
-    this.videos.delete(video);
+    this.videos.forEach((queue) => {
+      if (queue.videoId === video.videoId) {
+        this.videos.delete(queue);
+      };
+    });
+    console.debug(this.videos);
   }
 
+  getVideos() {
+    if (this.videos && this.videos !== undefined) {
+      return this.videos;
+    } else {
+      return null;
+    }
+  };
   /** send message to all members in a room. */
   // exclude self
   broadcastExclusive(data) {
@@ -76,6 +89,15 @@ class Room {
     console.debug(data);
     for (let member of this.members) {
       member.send(JSON.stringify(data));
+    }
+  }
+
+  broadcastSelf(data) {
+    console.debug(data);
+    for (let member of this.members) {
+      if (member.username === data.username) {
+        member.send(JSON.stringify(data));
+      }
     }
   }
 }

@@ -4,12 +4,27 @@ import { useState, useEffect, useRef } from "react";
 
 
 
-const Video = ({ sendJsonMessage, globalPlaybackTime, globalPlayerState }) => {
+const Video = ({
+  sendJsonMessage,
+  globalPlaybackTime,
+  globalPlayerState,
+  globalQueue }) => {
   const [playbackTime, setPlaybackTime] = useState(null);
   const [player, setPlayer] = useState(null);
   const [videoId, setVideoId] = useState("M7lc1UVf-VE")
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
+
+  // useEffect(function () {
+  //   if (player) {
+  //     console.debug(selectedVideo.id.v)
+  //     player.cueVideoById({
+  //       videoId: selectedVideo.id.videoId,
+  //       startSeconds: 0
+  //     });
+  //     // player.playVideo();
+  //   };
+  // }, [selectedVideo]);
 
   useEffect(function () {
     // console.debug("effect")
@@ -46,25 +61,34 @@ const Video = ({ sendJsonMessage, globalPlaybackTime, globalPlayerState }) => {
 
   const handleStateChange = (e) => handleEvent(e);
   const handlePlay = () => {
-    // console.log("Play!");
+    console.log("Play!");
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "play" });
   };
   const handlePause = () => {
-    // console.log("Pause!");
+    console.log("Pause!");
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "pause" });
   };
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
-    // console.log("Seek!");
+    console.log("Seek!");
     console.debug(playbackTime, 'Local user has updated time');
     sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "seek" });
 
   };
+  const handleCue = () => {
+    console.log('Cued!')
+  }
+  const handleEnd = () => {
+    console.log('Ended!')
+    console.log(globalQueue);
+    setVideoId(globalQueue[0].videoId);
+    // global
+  }
 
   const isSubArrayEnd = (A, B) => {
     if (A.length < B.length)
@@ -80,6 +104,11 @@ const Video = ({ sendJsonMessage, globalPlaybackTime, globalPlayerState }) => {
 
   const handleEvent = (e) => {
     // Update sequence with current state change event
+    if (e.data === 5) {
+      handleCue()
+    } else if (e.data === 0) {
+      handleEnd()
+    }
     setSequence([...sequence, e.data]);
     if (e.data === 1 && isSubArrayEnd(sequence, [3]) && !sequence.includes(-1)) {
       handleSeek(); // Arrow keys seek

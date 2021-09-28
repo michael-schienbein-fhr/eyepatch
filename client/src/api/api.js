@@ -104,6 +104,10 @@ class EyepatchApi {
     let res = await this.request(`users/${username}`, data, "patch");
     return res.user;
   }
+
+  static async getVideos(video) {
+    
+  }
 }
 
 

@@ -12,7 +12,8 @@ class ChatUser {
     this._send = send; // "send" function for this user
     this.username = null; // becomes the username of the visitor
     this.room = Room.get(roomId); // room user will be in
-
+    this.queue = Array.from(this.room.getVideos());
+    // console.debug(this.queue);
     console.log(`created chat in room: ${this.room.id}`);
   };
 
@@ -31,10 +32,24 @@ class ChatUser {
   handleJoin(username) {
     this.username = username;
     this.room.join(this);
+    // this.queue = this.room.getVideos()
     this.room.broadcast({
       type: 'note',
-      text: `${this.username} joined "${this.room.id}".`
+      text: `${this.username} joined "${this.room.id}".`,
+      // queue: this.queue
+
     });
+    for (let video of this.queue) {
+      this.room.broadcastSelf({
+        username: this.username,
+        type: 'video',
+        text: `"${video.title}" added to queue for user: "${this.username}".`,
+        videoId: video.videoId,
+        title: video.title,
+        description: video.description,
+        thumbnail: video.thumbnail
+      });
+    };
   };
 
   /** handle a chat: broadcast to room. */
@@ -47,15 +62,31 @@ class ChatUser {
     });
   };
 
-  handleVideoId(videoId) {
-    // console.debug(videoId);
-    this.videoId = videoId;
-    // if(videoId.action ===)
-    this.room.add(this);
-    this.room.broadcast({
-      type: 'videoId',
-      text: `${this.videoId} added to queue in: "${this.room.id}".`
-    });
+  handleVideo(video) {
+    this.video = video;
+    if (video.action === 'add') {
+      this.room.add(this.video);
+      this.room.broadcast({
+        type: 'video',
+        action: 'add',
+        text: `"${this.video.title}" added to queue in room: "${this.room.id}".`,
+        videoId: this.video.videoId,
+        title: this.video.title,
+        description: this.video.description,
+        thumbnail: this.video.thumbnail
+      });
+    } else if (video.action === 'remove'){
+      this.room.remove(this.video);
+      this.room.broadcast({
+        type: 'video',
+        action: 'remove',
+        text: `"${this.video.title}" added to queue in room: "${this.room.id}".`,
+        videoId: this.video.videoId,
+        title: this.video.title,
+        description: this.video.description,
+        thumbnail: this.video.thumbnail
+      });
+    };
   };
 
   handleTime(time) {
@@ -85,7 +116,7 @@ class ChatUser {
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else if (msg.type === 'time') this.handleTime(msg.time);
     else if (msg.type === 'playerState') this.handlePlayerState(msg.state);
-    else if (msg.type === 'videoId') this.handleVideoId(msg.videoId);
+    else if (msg.type === 'video') this.handleVideo(msg);
     else throw new Error(`bad message: ${msg.type}`);
   }
 
