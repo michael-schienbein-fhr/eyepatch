@@ -75,12 +75,12 @@ class ChatUser {
         description: this.video.description,
         thumbnail: this.video.thumbnail
       });
-    } else if (video.action === 'remove'){
+    } else if (video.action === 'remove') {
       this.room.remove(this.video);
       this.room.broadcast({
         type: 'video',
         action: 'remove',
-        text: `"${this.video.title}" added to queue in room: "${this.room.id}".`,
+        text: `"${this.video.title}" removed from queue in room: "${this.room.id}".`,
         videoId: this.video.videoId,
         title: this.video.title,
         description: this.video.description,
@@ -97,38 +97,41 @@ class ChatUser {
     });
   };
 
-  handlePlayerState(state) {
-    this.room.broadcastExclusive({
-      username: this.username,
-      type: 'playerState',
-      state: state
-    });
-  };
-  /** Handle messages from client:
-   *
-   * - {type: "join", name: username} : join
-   * - {type: "chat", text: msg }     : chat
-   */
+  handlePlayerState(msg) {
+  this.room.broadcastExclusive({
+    username: this.username,
+    type: 'playerState',
+    state: msg.state,
+    time: msg.time
+  });
+};
 
-  handleMessage(jsonData) {
-    let msg = JSON.parse(jsonData);
-    if (msg.type === 'join') this.handleJoin(msg.username);
-    else if (msg.type === 'chat') this.handleChat(msg.text);
-    else if (msg.type === 'time') this.handleTime(msg.time);
-    else if (msg.type === 'playerState') this.handlePlayerState(msg.state);
-    else if (msg.type === 'video') this.handleVideo(msg);
-    else throw new Error(`bad message: ${msg.type}`);
+/** Handle messages from client:
+ *
+ * - {type: "join", name: username} : join
+ * - {type: "chat", text: msg }     : chat
+ */
+
+handleMessage(jsonData) {
+  let msg = JSON.parse(jsonData);
+  if (msg.type === 'join') this.handleJoin(msg.username);
+  else if (msg.type === 'chat') this.handleChat(msg.text);
+  else if (msg.type === 'playerState') {
+    this.handlePlayerState(msg);
   }
+  else if (msg.type === 'video') this.handleVideo(msg);
+  else throw new Error(`bad message: ${msg.type}`);
+}
 
-  /** Connection was closed: leave room, announce exit to others */
+/** Connection was closed: leave room, announce exit to others */
 
-  handleClose() {
-    this.room.leave(this);
-    this.room.broadcast({
-      type: 'note',
-      text: `${this.username} left ${this.room.id}.`
-    });
-  }
+handleClose() {
+  this.room.leave(this);
+  this.room.broadcast({
+    type: 'note',
+    text: `${this.username} left ${this.room.id}.`
+  });
+}
 }
 
 module.exports = ChatUser;
