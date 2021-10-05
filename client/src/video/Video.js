@@ -32,7 +32,6 @@ const Video = ({
       if (globalPlayerState === 'seek') {
         console.log("Seek!");
         player.seekTo(globalPlaybackTime);
-        player.playVideo();
       };
     };
   }, [globalPlaybackTime, globalPlayerState]);
@@ -56,7 +55,6 @@ const Video = ({
         if (progress.playedSeconds !== prevPlayed || progress.loadedSeconds !== prevLoaded) {
           console.log(progress);
           sendJsonMessage({ type: "playerState", state: "seek", time: playedSeconds });
-          player.playVideo();
         };
 
         prevPlayed = progress.playedSeconds;
@@ -141,7 +139,7 @@ const Video = ({
       autoplay: 1,
     },
   };
-  
+
   return (
     <div>
       <YouTube
