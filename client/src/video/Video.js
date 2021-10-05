@@ -58,6 +58,7 @@ const Video = ({
         console.log("Seek!");
         // console.log(player.getPlayerState());
         player.seekTo(globalPlaybackTime);
+        player.playVideo();
       };
     };
   }, [globalPlaybackTime, globalPlayerState]);
@@ -88,8 +89,9 @@ const Video = ({
           // setPlaybackTime(playedSeconds);
           // console.log(playbackTime);
           console.log(progress);
-          console.log(player.getPlayerState())
+          // console.log(player.getPlayerState())
           sendJsonMessage({ type: "playerState", state: "seek", time: playedSeconds });
+          player.playVideo();
         };
 
         prevPlayed = progress.playedSeconds;
@@ -145,6 +147,7 @@ const Video = ({
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
     console.log("Seek!");
+    clearInterval(interval.current);
     console.debug(playbackTime, 'Local user has updated time');
     // sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "seek", time: playbackTime });
