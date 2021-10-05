@@ -15,8 +15,10 @@ const Video = ({
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
   const playerRef = useRef(null);
+  const interval = useRef(null);
   // let progressTimeout;
-  let progressInterval;
+  // let progressInterval = null;
+  // let progressClear = null;
   let prevPlayed;
   let prevLoaded;
   // useEffect(function () {
@@ -86,6 +88,7 @@ const Video = ({
           // setPlaybackTime(playedSeconds);
           // console.log(playbackTime);
           console.log(progress);
+          console.log(player.getPlayerState())
           sendJsonMessage({ type: "playerState", state: "seek", time: playedSeconds });
         };
 
@@ -103,7 +106,22 @@ const Video = ({
   const onReady = (e) => {
     console.debug(`YouTube Player object has been saved to state.`);
     setPlayer(e.target);
+    console.log(e.target);
   };
+
+  // const preProgress = () => {
+  //   const interval = useRef();
+  //   const startInterval = () => {
+  //     interval.current = setInterval(() => {
+  //       //code
+  //     }, 3000);
+  //   };
+  //   useEffect(() => {
+  //     return () => {
+  //       clearInterval(interval.current);
+  //     };
+  //   }, []);
+  // };
 
 
   const handleStateChange = (e) => handleEvent(e);
@@ -111,15 +129,15 @@ const Video = ({
     console.log("Play!");
     // console.log(progressTimeout);
     // clearTimeout(progressTimeout);
-    console.log(progressInterval);
-    clearInterval(progressInterval);
+    // console.log(progressInterval);
+    clearInterval(interval.current);
     console.debug(playbackTime, 'Local user has updated time');
     // sendJsonMessage({ type: "time",  });
     sendJsonMessage({ type: "playerState", state: "play", time: playbackTime });
   };
   const handlePause = () => {
     console.log("Pause!");
-    progressInterval = setInterval(onProgress, 1000);
+    interval.current = setInterval(onProgress, 1000);
     console.debug(playbackTime, 'Local user has updated time');
     // sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "pause", time: playbackTime });
