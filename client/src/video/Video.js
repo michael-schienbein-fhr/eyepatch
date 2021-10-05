@@ -86,6 +86,7 @@ const Video = ({
           // setPlaybackTime(playedSeconds);
           // console.log(playbackTime);
           console.log(progress);
+          sendJsonMessage({ type: "playerState", state: "seek", time: playedSeconds });
         };
 
         prevPlayed = progress.playedSeconds;
@@ -118,7 +119,7 @@ const Video = ({
   };
   const handlePause = () => {
     console.log("Pause!");
-    progressInterval = setInterval(onProgress, 3000);
+    progressInterval = setInterval(onProgress, 1000);
     console.debug(playbackTime, 'Local user has updated time');
     // sendJsonMessage({ type: "time", time: playbackTime });
     sendJsonMessage({ type: "playerState", state: "pause", time: playbackTime });
