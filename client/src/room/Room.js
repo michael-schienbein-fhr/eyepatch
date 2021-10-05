@@ -39,13 +39,13 @@ const Room = () => {
   const onMessage = (e) => {
     // console.log('message', e.data);
     const message = JSON.parse(e.data);
-    console.debug(message);
+    // console.debug(message);
     if (message.type === 'chat') {
       setMessages((_messages) => [..._messages, message]);
-    } else if (message.type === 'time') {
-      setGlobalPlaybackTime(message.time);
     } else if (message.type === 'playerState') {
+      console.debug(message, 'this');
       setGlobalPlayerState(message.state);
+      setGlobalPlaybackTime(message.time);
     } else if (message.type === 'video' && message.action === 'add') {
       setGlobalQueue((_videos) => [..._videos, message]);
     } else if (message.type === 'video' && message.action === 'remove') {

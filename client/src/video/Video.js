@@ -14,7 +14,11 @@ const Video = ({
   const [videoId, setVideoId] = useState("M7lc1UVf-VE")
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
-
+  const playerRef = useRef(null);
+  // let progressTimeout;
+  let progressInterval;
+  let prevPlayed;
+  let prevLoaded;
   // useEffect(function () {
   //   if (player) {
   //     console.debug(selectedVideo.id.v)
@@ -25,59 +29,106 @@ const Video = ({
   //     // player.playVideo();
   //   };
   // }, [selectedVideo]);
+  useEffect(function () {
+    // console.debug(playerRef.current.getInternalPlayer());
 
+    // _this.player.load(_this.props.url);
+
+    // _this.progress();
+  }, [])
   useEffect(function () {
     // console.debug("effect")
     console.debug('\nOther user has updated time and state\n', 'time:', globalPlaybackTime, 'state:', globalPlayerState);
     if (player) {
       if (globalPlayerState === 'play') {
         console.log("Play!");
-        console.log(player.getPlayerState());
+        // console.log(player.getPlayerState());
         player.playVideo();
       };
       if (globalPlayerState === 'pause') {
         console.log("Pause!");
-        console.log(player.getPlayerState());
+        // console.log(player.getPlayerState());
         // player.seekTo(globalPlaybackTime);
         player.pauseVideo();
+
       };
       if (globalPlayerState === 'seek') {
         console.log("Seek!");
-        console.log(player.getPlayerState());
+        // console.log(player.getPlayerState());
         player.seekTo(globalPlaybackTime);
       };
     };
   }, [globalPlaybackTime, globalPlayerState]);
+
+  const onProgress = () => {
+    if (player) {
+      let playedSeconds = player.getCurrentTime() || 0;
+
+      let loadedSeconds = getSecondsLoaded();
+
+      let duration = player.getDuration();
+
+
+      if (duration) {
+        let progress = {
+          playedSeconds: playedSeconds,
+          played: playedSeconds / duration
+        };
+        if (loadedSeconds !== null) {
+          progress.loadedSeconds = loadedSeconds;
+          progress.loaded = loadedSeconds / duration;
+        }
+        // Only call onProgress if values have changed
+
+
+
+        if (progress.playedSeconds !== prevPlayed || progress.loadedSeconds !== prevLoaded) {
+          // setPlaybackTime(playedSeconds);
+          // console.log(playbackTime);
+          console.log(progress);
+        };
+
+        prevPlayed = progress.playedSeconds;
+        prevLoaded = progress.loadedSeconds;
+      }
+    }
+    // progressTimeout = setTimeout(onProgress, 3000);
+  };
+
+  const getSecondsLoaded = () => {
+    return player.getVideoLoadedFraction() * player.getDuration();
+  };
 
   const onReady = (e) => {
     console.debug(`YouTube Player object has been saved to state.`);
     setPlayer(e.target);
   };
 
-  const onStateChange = (e) => {
-    setPlaybackTime(player.getCurrentTime());
-    handleStateChange(e)
-  };
 
   const handleStateChange = (e) => handleEvent(e);
   const handlePlay = () => {
     console.log("Play!");
+    // console.log(progressTimeout);
+    // clearTimeout(progressTimeout);
+    console.log(progressInterval);
+    clearInterval(progressInterval);
     console.debug(playbackTime, 'Local user has updated time');
-    sendJsonMessage({ type: "time", time: playbackTime });
-    sendJsonMessage({ type: "playerState", state: "play" });
+    // sendJsonMessage({ type: "time",  });
+    sendJsonMessage({ type: "playerState", state: "play", time: playbackTime });
   };
   const handlePause = () => {
     console.log("Pause!");
+    progressInterval = setInterval(onProgress, 3000);
     console.debug(playbackTime, 'Local user has updated time');
-    sendJsonMessage({ type: "time", time: playbackTime });
-    sendJsonMessage({ type: "playerState", state: "pause" });
+    // sendJsonMessage({ type: "time", time: playbackTime });
+    sendJsonMessage({ type: "playerState", state: "pause", time: playbackTime });
   };
   const handleBuffer = () => console.log("Buffer!");
   const handleSeek = () => {
     console.log("Seek!");
     console.debug(playbackTime, 'Local user has updated time');
-    sendJsonMessage({ type: "time", time: playbackTime });
-    sendJsonMessage({ type: "playerState", state: "seek" });
+    // sendJsonMessage({ type: "time", time: playbackTime });
+    sendJsonMessage({ type: "playerState", state: "seek", time: playbackTime });
 
   };
   const handleCue = () => {
@@ -87,7 +138,6 @@ const Video = ({
     console.log('Ended!')
     console.log(globalQueue);
     setVideoId(globalQueue[0].videoId);
-    // global
   }
 
   const isSubArrayEnd = (A, B) => {
@@ -103,6 +153,7 @@ const Video = ({
   };
 
   const handleEvent = (e) => {
+    setPlaybackTime(player.getCurrentTime());
     // Update sequence with current state change event
     if (e.data === 5) {
       handleCue()
@@ -137,9 +188,10 @@ const Video = ({
   return (
     <div>
       <YouTube
+        ref={playerRef}
         videoId={videoId}
         containerClassName="Youtube"
-        onStateChange={onStateChange}
+        onStateChange={e => handleStateChange(e)}
         onReady={onReady}
         opts={opts}
       />
