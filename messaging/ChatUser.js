@@ -13,7 +13,8 @@ class ChatUser {
     this.username = null; // becomes the username of the visitor
     this.room = Room.get(roomId); // room user will be in
     this.queue = Array.from(this.room.getVideos());
-    // console.debug(this.queue);
+    this.currentVideoId = this.room.getCurrentVideoId();
+    this.currentVideoTime = this.room.getCurrentVideoTime();
     console.log(`created chat in room: ${this.room.id}`);
   };
 
@@ -31,18 +32,18 @@ class ChatUser {
 
   handleJoin(username) {
     this.username = username;
+    console.log(this.currentVideoTime);
     this.room.join(this);
-    // this.queue = this.room.getVideos()
     this.room.broadcast({
       type: 'note',
       text: `${this.username} joined "${this.room.id}".`,
-      // queue: this.queue
 
     });
     for (let video of this.queue) {
       this.room.broadcastSelf({
         username: this.username,
         type: 'video',
+        action: 'add',
         text: `"${video.title}" added to queue for user: "${this.username}".`,
         videoId: video.videoId,
         title: video.title,
@@ -50,6 +51,14 @@ class ChatUser {
         thumbnail: video.thumbnail
       });
     };
+    this.room.broadcastSelf({
+      username: this.username,
+      type: 'video',
+      action: 'change',
+      time: this.currentVideoTime,
+      text: `"Changed to ${this.currentVideoId}" in room: "${this.room.id}".`,
+      videoId: this.currentVideoId,
+    })
   };
 
   /** handle a chat: broadcast to room. */
@@ -86,52 +95,84 @@ class ChatUser {
         description: this.video.description,
         thumbnail: this.video.thumbnail
       });
-    };
-  };
-
-  handleTime(time) {
-    this.room.broadcastExclusive({
-      username: this.username,
-      type: 'time',
-      time: time
-    });
+    } else if (video.action === 'change') {
+      this.room.setCurrentVideoId(this.video.videoId)
+      this.room.broadcast({
+        type: 'video',
+        action: 'change',
+        time: 0,
+        text: `"Changed to ${this.video.videoId}" in room: "${this.room.id}".`,
+        videoId: this.video.videoId,
+      });
+    }
   };
 
   handlePlayerState(msg) {
-  this.room.broadcastExclusive({
-    username: this.username,
-    type: 'playerState',
-    state: msg.state,
-    time: msg.time
-  });
-};
+    if (!this.currentVideoTime) {
+      this.room.setCurrentVideoTime(msg.time);
+    } else if (this.currentVideoTime < msg.time) {
+      this.room.setCurrentVideoTime(msg.time);
+    }
+    console.log(msg.time);
+    // console.log(this.currentVideoTime);
+    this.room.broadcastExclusive({
+      username: this.username,
+      type: 'playerState',
+      who: 'exclusive',
+      state: msg.state,
+      time: msg.time,
+      videoId: msg.videoId
+    });
 
-/** Handle messages from client:
- *
- * - {type: "join", name: username} : join
- * - {type: "chat", text: msg }     : chat
- */
+    if (msg.who === 'everyone') {
+      this.room.broadcast({
+        username: this.username,
+        type: 'playerState',
+        who: 'everyone',
+        state: msg.state,
+        time: msg.time,
+        videoId: msg.videoId
+      });
+    };
 
-handleMessage(jsonData) {
-  let msg = JSON.parse(jsonData);
-  if (msg.type === 'join') this.handleJoin(msg.username);
-  else if (msg.type === 'chat') this.handleChat(msg.text);
-  else if (msg.type === 'playerState') {
-    this.handlePlayerState(msg);
+    if (msg.who === 'self') {
+      this.room.broadcastSelf({
+        username: this.username,
+        type: 'playerState',
+        who: 'self',
+        state: msg.state,
+        time: msg.time,
+        videoId: msg.videoId
+      });
+    };
+  };
+
+  /** Handle messages from client:
+   *
+   * - {type: "join", name: username} : join
+   * - {type: "chat", text: msg }     : chat
+   */
+
+  handleMessage(jsonData) {
+    let msg = JSON.parse(jsonData);
+    if (msg.type === 'join') this.handleJoin(msg.username);
+    else if (msg.type === 'chat') this.handleChat(msg.text);
+    else if (msg.type === 'playerState') {
+      this.handlePlayerState(msg);
+    }
+    else if (msg.type === 'video') this.handleVideo(msg);
+    else throw new Error(`bad message: ${msg.type}`);
   }
-  else if (msg.type === 'video') this.handleVideo(msg);
-  else throw new Error(`bad message: ${msg.type}`);
-}
 
-/** Connection was closed: leave room, announce exit to others */
+  /** Connection was closed: leave room, announce exit to others */
 
-handleClose() {
-  this.room.leave(this);
-  this.room.broadcast({
-    type: 'note',
-    text: `${this.username} left ${this.room.id}.`
-  });
-}
+  handleClose() {
+    this.room.leave(this);
+    this.room.broadcast({
+      type: 'note',
+      text: `${this.username} left ${this.room.id}.`
+    });
+  }
 }
 
 module.exports = ChatUser;

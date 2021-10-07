@@ -14,16 +14,16 @@ const WEBSOCKET_BASE = (process.env.NODE_ENV === "test")
   : "ws://localhost:8001" //put heroku here
 
 const Room = () => {
+  const { id } = useParams();
   const { currentUser } = useContext(UserContext);
-  const [messages, setMessages] = useState([]);
-  const [globalQueue, setGlobalQueue] = useState([])
-  const [videoSearchRes, setVideoSearchRes] = useState([]);
-  // const [selectedVideo, setSelectedVideo] = useState(null);
-
   const [username, setUsername] = useState("");
+  const [messages, setMessages] = useState([]);
+  
+  const [videoSearchRes, setVideoSearchRes] = useState([]);
+  const [globalQueue, setGlobalQueue] = useState([])
   const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
   const [globalPlayerState, setGlobalPlayerState] = useState(null);
-  const { id } = useParams();
+  const [globalVideoId, setGlobalVideoId] = useState(null);
 
   useEffect(function changeUsername() {
     setUsername(currentUser.username);
@@ -37,24 +37,23 @@ const Room = () => {
   };
 
   const onMessage = (e) => {
-    // console.log('message', e.data);
     const message = JSON.parse(e.data);
-    // console.debug(message);
     if (message.type === 'chat') {
       setMessages((_messages) => [..._messages, message]);
     } else if (message.type === 'playerState') {
-      console.debug(message, 'this');
       setGlobalPlayerState(message.state);
       setGlobalPlaybackTime(message.time);
     } else if (message.type === 'video' && message.action === 'add') {
       setGlobalQueue((_videos) => [..._videos, message]);
     } else if (message.type === 'video' && message.action === 'remove') {
-      console.debug(globalQueue, 'this');
       setGlobalQueue(globalQueue.filter(video => video.videoId !== message.videoId));
-
+    } else if (message.type === 'video' && message.action === 'change') {
+      console.log(message, 'this');
+      setGlobalVideoId(message.videoId);
+      setGlobalPlayerState("play");
+      setGlobalPlayerState("seek");
+      setGlobalPlaybackTime(message.time);
     }
-    // console.debug(globalQueue);
-    // console.debug(messages);
   };
 
   const {
@@ -98,8 +97,6 @@ const Room = () => {
   };
 
   const handleVideoQueing = (video) => {
-    // setSelectedVideo(video);
-    // console.debug(video, 'its this');
     sendJsonMessage({
       type: 'video',
       action: 'add',
@@ -112,18 +109,20 @@ const Room = () => {
   }
 
   const handleVideoRemoval = (video) => {
-    // setSelectedVideo(video);
-    console.debug(video, 'its this');
     sendJsonMessage({
       type: 'video',
       action: 'remove',
       videoId: video.videoId,
-      // title: video.title,
-      // description: video.description,
-      // thumbnail: video.thumbnail
     });
-    setVideoSearchRes([]);
   }
+
+  const handleVideoChange = (video) => {
+    sendJsonMessage({
+      type: 'video',
+      action: 'change',
+      videoId: video.videoId,
+    });
+  };
 
   return (
     <div className="Room">
@@ -136,6 +135,8 @@ const Room = () => {
               globalPlaybackTime={globalPlaybackTime}
               globalPlayerState={globalPlayerState}
               globalQueue={globalQueue}
+              globalVideoId={globalVideoId}
+              handleVideoChange={handleVideoChange}
             />
           </div>
           <div className="p-1">
@@ -152,6 +153,7 @@ const Room = () => {
               globalQueue={globalQueue}
               handleVideoQueing={handleVideoQueing}
               handleVideoRemoval={handleVideoRemoval}
+              handleVideoChange={handleVideoChange}
             />
           </div>
         </div>

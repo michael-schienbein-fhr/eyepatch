@@ -8,16 +8,33 @@ const Video = ({
   sendJsonMessage,
   globalPlaybackTime,
   globalPlayerState,
-  globalQueue }) => {
+  globalQueue,
+  globalVideoId,
+  handleVideoChange
+}) => {
   const [playbackTime, setPlaybackTime] = useState(null);
   const [player, setPlayer] = useState(null);
-  const [videoId, setVideoId] = useState("M7lc1UVf-VE")
+  const [currentVideoId, setCurrentVideoId] = useState(null);
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
   const playerRef = useRef(null);
   const interval = useRef(null);
   let prevPlayed;
   let prevLoaded;
+
+  useEffect(function () {
+    console.log(globalQueue);
+    console.log(globalVideoId);
+    console.log(globalPlaybackTime)
+    setCurrentVideoId(globalVideoId);
+    // sendJsonMessage({ type: "playerState", who: 'self', state: "seek", time: globalPlaybackTime, videoId: currentVideoId });
+  }, [player])
+
+  useEffect(function () {
+    if (player && globalVideoId !== currentVideoId) {
+      setCurrentVideoId(globalVideoId);
+    };
+  }, [globalVideoId, currentVideoId]);
 
   useEffect(function () {
     if (player) {
@@ -36,7 +53,7 @@ const Video = ({
     };
   }, [globalPlaybackTime, globalPlayerState]);
 
-  const onProgress = () => {
+  const onProgress = (who) => {
     if (player) {
       let playedSeconds = player.getCurrentTime() || 0;
       let loadedSeconds = getSecondsLoaded();
@@ -54,7 +71,7 @@ const Video = ({
 
         if (progress.playedSeconds !== prevPlayed || progress.loadedSeconds !== prevLoaded) {
           console.log(progress);
-          sendJsonMessage({ type: "playerState", state: "seek", time: playedSeconds });
+          sendJsonMessage({ type: "playerState", who, state: "seek", time: playedSeconds, videoId: currentVideoId });
         };
 
         prevPlayed = progress.playedSeconds;
@@ -74,26 +91,31 @@ const Video = ({
   const handlePlay = () => {
     console.log("Play!");
     clearInterval(interval.current);
-    sendJsonMessage({ type: "playerState", state: "play", time: playbackTime });
+    sendJsonMessage({ type: "playerState", who: 'exclusive', state: "play", time: playbackTime, videoId: currentVideoId });
   };
   const handlePause = () => {
     console.log("Pause!");
-    interval.current = setInterval(onProgress, 1000);
-    sendJsonMessage({ type: "playerState", state: "pause", time: playbackTime });
+    interval.current = setInterval(onProgress('exclusive'), 500);
+    sendJsonMessage({ type: "playerState", who: 'exclusive', state: "pause", time: playbackTime, videoId: currentVideoId });
   };
   const handleSeek = () => {
     console.log("Seek!");
     clearInterval(interval.current);
-    sendJsonMessage({ type: "playerState", state: "seek", time: playbackTime });
+    sendJsonMessage({ type: "playerState", who: 'exclusive', state: "seek", time: playbackTime, videoId: currentVideoId });
   };
   const handleCue = () => {
     console.log('Cued!')
-  }
+  };
   const handleEnd = () => {
     console.log('Ended!')
-    console.log(globalQueue);
-    setVideoId(globalQueue[0].videoId);
-  }
+    if (globalQueue.length > 0) {
+      for (let i = 0; i < globalQueue.length; i++) {
+        if (globalQueue[i + 1] && globalQueue[i].videoId === currentVideoId) {
+          handleVideoChange(globalQueue[i + 1]);
+        };
+      };
+    };
+  };
 
   const isSubArrayEnd = (A, B) => {
     if (A.length < B.length)
@@ -144,7 +166,7 @@ const Video = ({
     <div>
       <YouTube
         ref={playerRef}
-        videoId={videoId}
+        videoId={currentVideoId}
         containerClassName="Youtube"
         onStateChange={e => handleStateChange(e)}
         onReady={onReady}

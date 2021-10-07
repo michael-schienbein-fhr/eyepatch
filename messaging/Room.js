@@ -31,6 +31,8 @@ class Room {
     this.id = roomId;
     this.members = new Set();
     this.videos = new Set();
+    this.currentVideoId = null;
+    this.currentVideoTime = null;
   }
 
   /** member joining a room. */
@@ -49,7 +51,6 @@ class Room {
 
   add(video) {
     this.videos.add(video);
-    console.debug(this.video);
   }
   /** add video to queue. */
 
@@ -59,7 +60,6 @@ class Room {
         this.videos.delete(queue);
       };
     });
-    console.debug(this.videos);
   }
 
   getVideos() {
@@ -69,12 +69,37 @@ class Room {
       return null;
     }
   };
+
+  setCurrentVideoId(videoId) {
+    this.currentVideoId = videoId;
+  };
+
+  getCurrentVideoId() {
+    if (this.currentVideoId && this.currentVideoId !== null) {
+      return this.currentVideoId;
+    } else {
+      return null;
+    }
+  };
+
+  setCurrentVideoTime(videoTime) {
+    this.currentVideoTime = videoTime;
+  };
+
+  getCurrentVideoTime() {
+    if (this.currentVideoTime && this.currentVideoTime !== null) {
+      return this.currentVideoTime;
+    } else {
+      return null;
+    }
+  };
+
   /** send message to all members in a room. */
   // exclude self
   broadcastExclusive(data) {
     for (let member of this.members) {
       if (member.username !== data.username) {
-        console.debug('sent to: ', member.username, data);
+        // console.debug('sent to: ', member.username, data);
         member.send(JSON.stringify(data));
       }
     }
@@ -90,9 +115,9 @@ class Room {
   }
 
   broadcastSelf(data) {
-    console.debug(data);
     for (let member of this.members) {
       if (member.username === data.username) {
+        // console.debug(data);
         member.send(JSON.stringify(data));
       }
     }
