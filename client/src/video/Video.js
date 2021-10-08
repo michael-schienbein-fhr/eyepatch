@@ -8,6 +8,7 @@ const Video = ({
   sendJsonMessage,
   globalPlaybackTime,
   globalPlayerState,
+  setGlobalPlayerState,
   globalQueue,
   globalVideoId,
   joinSyncTime,
@@ -30,12 +31,16 @@ const Video = ({
   };
   useEffect(function () {
     clearInterval(interval.current);
-    window.clearTimeout(timeout.current);
+    clearTimeout(timeout.current);
+    if (player) {
+      setTimeout(() => handleSync(joinSyncTime), 1000)
+    }
+  }, [player])
+  useEffect(function () {
     if (player && globalVideoId !== currentVideoId) {
       setCurrentVideoId(globalVideoId);
-      setTimeout(() => handleSync(joinSyncTime), 1000)
     };
-  }, [globalVideoId, currentVideoId, player]);
+  }, [globalVideoId, player]);
 
   useEffect(function () {
     if (player) {
@@ -73,7 +78,7 @@ const Video = ({
           if (!timeoutBool) {
             sendJsonMessage({ type: "playerState", who: 'exclusive', state: "seek", time: playedSeconds, videoId: currentVideoId });
           } else if (timeoutBool) {
-            sendJsonMessage({ type: "playerState", who: 'exclusive', state: "sync", time: playedSeconds, videoId: currentVideoId });
+            sendJsonMessage({ type: "playerState", state: "sync", time: playedSeconds});
           }
         };
 
@@ -85,35 +90,7 @@ const Video = ({
       timeout.current = setTimeout(() => onProgress(true), 500);
     }
   };
-  // const onProgress2 = () => {
-  //   if (player) {
-  //     let playedSeconds = player.getCurrentTime() || 0;
-  //     let loadedSeconds = getSecondsLoaded();
-  //     let duration = player.getDuration();
 
-  //     if (duration) {
-  //       let progress = {
-  //         playedSeconds: playedSeconds,
-  //         played: playedSeconds / duration
-  //       };
-  //       if (loadedSeconds !== null) {
-  //         progress.loadedSeconds = loadedSeconds;
-  //         progress.loaded = loadedSeconds / duration;
-  //       }
-
-  //       if (progress.playedSeconds !== prevPlayed || progress.loadedSeconds !== prevLoaded) {
-  //         // console.log(progress);
-  //         // console.log(playedSeconds);
-  //         sendJsonMessage({ type: "playerState", who: 'exclusive', state: "sync", time: playedSeconds, videoId: currentVideoId });
-  //       };
-
-  //       prevPlayed = progress.playedSeconds;
-  //       prevLoaded = progress.loadedSeconds;
-  //     };
-  //   };
-  //   
-  //   setTimeoutBool(true);
-  // };
   const getSecondsLoaded = () => {
     return player.getVideoLoadedFraction() * player.getDuration();
   };
@@ -124,27 +101,24 @@ const Video = ({
 
   const handleStateChange = (e) => handleEvent(e);
   const handlePlay = () => {
-    console.log("Play!");
     clearInterval(interval.current);
     clearTimeout(timeout.current);
-    // onProgress(true);
+    onProgress(true);
     sendJsonMessage({ type: "playerState", who: 'exclusive', state: "play", time: playbackTime, videoId: currentVideoId });
   };
   const handlePause = () => {
-    console.log("Pause!");
     clearInterval(interval.current)
     clearTimeout(timeout.current);
     interval.current = setInterval(() => onProgress(false), 500);
     sendJsonMessage({ type: "playerState", who: 'exclusive', state: "pause", time: playbackTime, videoId: currentVideoId });
   };
   const handleSeek = (who, time, state) => {
-    console.log("Seek!");
     clearInterval(interval.current);
     // clearTimeout(timeout.current);
+    // onProgress(true);
     sendJsonMessage({ type: "playerState", who: who, state: state, time: time, videoId: currentVideoId });
   };
   const handleEnd = () => {
-    console.log('Ended!')
     clearInterval(interval.current);
     clearTimeout(timeout.current);
     if (globalQueue.length > 0) {
@@ -156,7 +130,6 @@ const Video = ({
     };
   };
   const handleCue = () => {
-    console.log('Cued!')
   };
 
   const isSubArrayEnd = (A, B) => {
@@ -195,7 +168,7 @@ const Video = ({
       }
     }
   };
-
+  // let autoplayBool = currentVideoId === null ? 0 : 1;
   const opts = {
     height: '200',
     width: '400',

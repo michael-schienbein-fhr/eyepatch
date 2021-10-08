@@ -49,10 +49,13 @@ const Room = () => {
       setGlobalQueue(globalQueue.filter(video => video.videoId !== message.videoId));
     } else if (message.type === 'video' && message.action === 'change') {
       setGlobalVideoId(message.videoId);
-      setGlobalPlayerState("play");
+      setGlobalPlaybackTime(message.time);
+      setGlobalPlayerState(null);
       setGlobalPlayerState("seek");
+    } else if (message.type === 'video' && message.action === 'sync') {
       setJoinSyncTime(message.time);
-    };
+      console.log('lol')
+    }
   };
 
   const {
@@ -133,6 +136,7 @@ const Room = () => {
               sendJsonMessage={sendJsonMessage}
               globalPlaybackTime={globalPlaybackTime}
               globalPlayerState={globalPlayerState}
+              setGlobalPlayerState={setGlobalPlayerState}
               globalQueue={globalQueue}
               globalVideoId={globalVideoId}
               joinSyncTime={joinSyncTime}

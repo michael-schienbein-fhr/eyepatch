@@ -55,10 +55,17 @@ class ChatUser {
       username: this.username,
       type: 'video',
       action: 'change',
-      time: this.currentVideoTime,
       text: `"Changed to ${this.currentVideoId}" in room: "${this.room.id}".`,
       videoId: this.currentVideoId,
     })
+    this.room.broadcastSelf({
+      username: this.username,
+      type: 'video',
+      action: 'sync',
+      time: this.currentVideoTime,
+      text: `"Synced video time" in room: "${this.room.id}".`,
+    });
+
   };
 
   /** handle a chat: broadcast to room. */
@@ -100,7 +107,6 @@ class ChatUser {
       this.room.broadcast({
         type: 'video',
         action: 'change',
-        // change to currentVideoTime for syncing time on join:
         time: 0,
         text: `"Changed to ${this.video.videoId}" in room: "${this.room.id}".`,
         videoId: this.video.videoId,
