@@ -37,6 +37,7 @@ const Video = ({
     }
   }, [player])
   useEffect(function () {
+    onProgress(true);
     if (player && globalVideoId !== currentVideoId) {
       setCurrentVideoId(globalVideoId);
     };
@@ -130,6 +131,7 @@ const Video = ({
     };
   };
   const handleCue = () => {
+    
   };
 
   const isSubArrayEnd = (A, B) => {
