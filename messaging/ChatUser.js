@@ -100,6 +100,7 @@ class ChatUser {
       this.room.broadcast({
         type: 'video',
         action: 'change',
+        // change to currentVideoTime for syncing time on join:
         time: 0,
         text: `"Changed to ${this.video.videoId}" in room: "${this.room.id}".`,
         videoId: this.video.videoId,
@@ -108,21 +109,23 @@ class ChatUser {
   };
 
   handlePlayerState(msg) {
+    // console.log(msg);
+    console.log(msg.time);
     if (!this.currentVideoTime) {
       this.room.setCurrentVideoTime(msg.time);
     } else if (this.currentVideoTime < msg.time) {
       this.room.setCurrentVideoTime(msg.time);
     }
-    console.log(msg.time);
-    // console.log(this.currentVideoTime);
-    this.room.broadcastExclusive({
-      username: this.username,
-      type: 'playerState',
-      who: 'exclusive',
-      state: msg.state,
-      time: msg.time,
-      videoId: msg.videoId
-    });
+    if (msg.who === 'exclusive') {
+      this.room.broadcastExclusive({
+        username: this.username,
+        type: 'playerState',
+        who: 'exclusive',
+        state: msg.state,
+        time: msg.time,
+        videoId: msg.videoId
+      });
+    }
 
     if (msg.who === 'everyone') {
       this.room.broadcast({

@@ -122,6 +122,15 @@ class Room {
       }
     }
   }
+  
+  broadcastOthers(data) {
+    for (let member of this.members) {
+      if (member.username === data.username) {
+        // console.debug(data);
+        member.send(JSON.stringify(data));
+      }
+    }
+  }
 }
 
 module.exports = Room;

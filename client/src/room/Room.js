@@ -18,13 +18,13 @@ const Room = () => {
   const { currentUser } = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [messages, setMessages] = useState([]);
-  
+
   const [videoSearchRes, setVideoSearchRes] = useState([]);
   const [globalQueue, setGlobalQueue] = useState([])
   const [globalPlaybackTime, setGlobalPlaybackTime] = useState(null);
   const [globalPlayerState, setGlobalPlayerState] = useState(null);
   const [globalVideoId, setGlobalVideoId] = useState(null);
-
+  const [joinSyncTime, setJoinSyncTime] = useState(null);
   useEffect(function changeUsername() {
     setUsername(currentUser.username);
   }, []);
@@ -40,7 +40,7 @@ const Room = () => {
     const message = JSON.parse(e.data);
     if (message.type === 'chat') {
       setMessages((_messages) => [..._messages, message]);
-    } else if (message.type === 'playerState') {
+    } else if (message.type === 'playerState' && message.state !== 'sync') {
       setGlobalPlayerState(message.state);
       setGlobalPlaybackTime(message.time);
     } else if (message.type === 'video' && message.action === 'add') {
@@ -48,12 +48,11 @@ const Room = () => {
     } else if (message.type === 'video' && message.action === 'remove') {
       setGlobalQueue(globalQueue.filter(video => video.videoId !== message.videoId));
     } else if (message.type === 'video' && message.action === 'change') {
-      console.log(message, 'this');
       setGlobalVideoId(message.videoId);
       setGlobalPlayerState("play");
       setGlobalPlayerState("seek");
-      setGlobalPlaybackTime(message.time);
-    }
+      setJoinSyncTime(message.time);
+    };
   };
 
   const {
@@ -136,6 +135,7 @@ const Room = () => {
               globalPlayerState={globalPlayerState}
               globalQueue={globalQueue}
               globalVideoId={globalVideoId}
+              joinSyncTime={joinSyncTime}
               handleVideoChange={handleVideoChange}
             />
           </div>
