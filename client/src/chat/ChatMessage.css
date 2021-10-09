@@ -1,17 +1,23 @@
 .message-container {
-	padding: 2rem;
-	margin: 2rem;
+	padding: 0.5rem;
+	margin: 0.5rem;
 	width: fit-content;
 
 	border-radius: 1rem 1rem 1rem 0;
 
 	background: #141414;
+}
+.message-container.own-message {
+	padding: 1rem;
+	margin: 1rem;
+	/* width: fit-content; */
+  max-width: 20rem;
+	border-radius: 1rem 1rem 1rem 0;
 
-	/* &.own-message {
+	background: #141414;
 		margin-left: auto;
-		border-radius: 12rem 12rem 0 12rem;
+		border-radius: 1rem 1rem 0 1rem;
 		background: linear-gradient(to bottom, #0c8293, #005568);
-	} */
 }
 
 .message-header {
@@ -29,8 +35,8 @@
 
 	/* font-family: $secondary-font-stack; */
 	font-weight: bold;
-	font-size: 2rem;
-	line-height: 2rem;
+	font-size: 1rem;
+	line-height: 1rem;
 	letter-spacing: 0.015em;
 }
 
@@ -39,16 +45,17 @@
 
 	/* font-family: $secondary-font-stack; */
 	font-weight: 500;
-	font-size: 2rem;
-	line-height: 2rem;
+	font-size: 1rem;
+	line-height: 0.5rem;
 	letter-spacing: 0.015em;
 }
 
 .message-body {
 	margin: 0;
-
+  max-width: 20rem;
+  word-break: break-all;
 	/* font-family: $primary-font-stack; */
-	font-size: 2rem;
-	line-height: 2rem;
+	font-size: 1rem;
+	line-height: 1rem;
 	letter-spacing: -0.025em;
 }
