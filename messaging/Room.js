@@ -31,6 +31,7 @@ class Room {
     this.id = roomId;
     this.members = new Set();
     this.videos = new Set();
+    this.playerIds = new Set();
     this.currentVideoId = null;
     this.currentVideoTime = null;
   }
@@ -46,6 +47,14 @@ class Room {
   leave(member) {
     this.members.delete(member);
   }
+
+  getMembers() {
+    if (this.members && this.members !== undefined) {
+      return this.members
+    } else {
+      return null;
+    }
+  };
 
   /** add video to queue. */
 
@@ -65,6 +74,19 @@ class Room {
   getVideos() {
     if (this.videos && this.videos !== undefined) {
       return this.videos;
+    } else {
+      return null;
+    }
+  };
+
+  addPlayerId(id) {
+    this.playerIds.add(id);
+  }
+  /** add video to queue. */
+
+  getPlayerIds() {
+    if (this.playerIds && this.playerIds !== undefined) {
+      return this.playerIds;
     } else {
       return null;
     }
@@ -99,7 +121,7 @@ class Room {
   broadcastExclusive(data) {
     for (let member of this.members) {
       if (member.username !== data.username) {
-        // console.debug('sent to: ', member.username, data);
+        console.debug('sent to: ', member.username, data);
         member.send(JSON.stringify(data));
       }
     }
@@ -123,14 +145,14 @@ class Room {
     }
   }
   
-  broadcastOthers(data) {
-    for (let member of this.members) {
-      if (member.username === data.username) {
-        // console.debug(data);
-        member.send(JSON.stringify(data));
-      }
-    }
-  }
+  // broadcastOthers(data) {
+  //   for (let member of this.members) {
+  //     if (member.username === data.username) {
+  //       // console.debug(data);
+  //       member.send(JSON.stringify(data));
+  //     }
+  //   }
+  // }
 }
 
 module.exports = Room;

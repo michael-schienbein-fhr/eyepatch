@@ -13,6 +13,7 @@ class ChatUser {
     this.username = null; // becomes the username of the visitor
     this.room = Room.get(roomId); // room user will be in
     this.queue = Array.from(this.room.getVideos());
+    this.members = Array.from(this.room.getMembers())
     this.currentVideoId = this.room.getCurrentVideoId();
     this.currentVideoTime = this.room.getCurrentVideoTime();
     console.log(`created chat in room: ${this.room.id}`);
@@ -32,7 +33,11 @@ class ChatUser {
 
   handleJoin(username) {
     this.username = username;
-    console.log(this.currentVideoTime);
+    for (let member of this.members) {
+
+      console.log(member)
+      console.log(member.username)
+    }
     this.room.join(this);
     this.room.broadcast({
       type: 'note',
@@ -49,6 +54,13 @@ class ChatUser {
         title: video.title,
         description: video.description,
         thumbnail: video.thumbnail
+      });
+    };
+    for (let member of this.members) {
+      this.room.broadcastSelf({
+        username: this.username,
+        type: 'members',
+        roomMember: member.username
       });
     };
     this.room.broadcastSelf({
@@ -116,7 +128,8 @@ class ChatUser {
 
   handlePlayerState(msg) {
     // console.log(msg);
-    console.log(msg.time);
+    // console.log(msg.time);
+    console.log(this.playerIds)
     if (!this.currentVideoTime) {
       this.room.setCurrentVideoTime(msg.time);
     } else if (this.currentVideoTime < msg.time) {
@@ -156,6 +169,29 @@ class ChatUser {
     };
   };
 
+  // handleUsernames(username){
+
+  // }
+  // handlePlayerId(id) {
+  //   this.playerId = id
+  //   this.room.addPlayerId(this.playerId);
+    // this.room.broadcast({
+    //   type: 'playerId',
+    //   id: this.playerId
+    // });
+    // for (let id of this.playerIds) {
+    //   this.room.broadcastSelf({
+    //     username: this.username,
+    //     type: 'video',
+    //     action: 'add',
+    //     text: `"${video.title}" added to queue for user: "${this.username}".`,
+    //     videoId: video.videoId,
+    //     title: video.title,
+    //     description: video.description,
+    //     thumbnail: video.thumbnail
+    //   });
+    // };
+  // }
   /** Handle messages from client:
    *
    * - {type: "join", name: username} : join
@@ -164,12 +200,15 @@ class ChatUser {
 
   handleMessage(jsonData) {
     let msg = JSON.parse(jsonData);
+    console.log(msg)
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else if (msg.type === 'playerState') {
       this.handlePlayerState(msg);
     }
     else if (msg.type === 'video') this.handleVideo(msg);
+    // else if (msg.type === 'playerId') this.handlePlayerId(msg.id);
+    // else if (msg.type === 'username') this.handlePlayerId(msg.id);
     else throw new Error(`bad message: ${msg.type}`);
   }
 

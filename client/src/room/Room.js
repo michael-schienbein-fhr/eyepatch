@@ -25,6 +25,8 @@ const Room = () => {
   const [globalPlayerState, setGlobalPlayerState] = useState(null);
   const [globalVideoId, setGlobalVideoId] = useState(null);
   const [joinSyncTime, setJoinSyncTime] = useState(null);
+  // const [playerIds, setPlayerIds] = useState([]);
+  const [roomMembers, setRoomMembers] = useState([]);
   useEffect(function changeUsername() {
     setUsername(currentUser.username);
   }, []);
@@ -54,7 +56,8 @@ const Room = () => {
       setGlobalPlayerState("seek");
     } else if (message.type === 'video' && message.action === 'sync') {
       setJoinSyncTime(message.time);
-      console.log('lol')
+    } else if (message.type === 'members') {
+      setRoomMembers((_members) => [..._members, message.roomMember]);
     }
   };
 
@@ -137,20 +140,23 @@ const Room = () => {
               globalPlaybackTime={globalPlaybackTime}
               globalPlayerState={globalPlayerState}
               setGlobalPlayerState={setGlobalPlayerState}
+              roomMembers={roomMembers}
+              username={username}
               globalQueue={globalQueue}
               globalVideoId={globalVideoId}
               joinSyncTime={joinSyncTime}
               handleVideoChange={handleVideoChange}
             />
           </div>
-          <div className="p-1">
+          {/* <div className="p-1"> */}
             <Chat
               messages={messages}
+              username={username}
               sendJsonMessage={sendJsonMessage}
               connectionStatus={connectionStatus}
               readyState={readyState}
             />
-          </div>
+          {/* </div> */}
           <div className="p-1">
             <VideoList
               videoSearchRes={videoSearchRes}

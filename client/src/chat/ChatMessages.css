@@ -1,3 +1,24 @@
-.ChatMessage {
-  text-align: center;
+.ChatMessages {
+  flex: 1;
+	padding-top: 1rem;
+	overflow-y: auto;
+  background-color: black;
 }
+::-webkit-scrollbar {
+		background: black;
+		width: 8px;
+}
+::-webkit-scrollbar-button {
+		display: none;
+}
+::-webkit-scrollbar-thumb {
+		background: #141414;
+		border-radius: 4px;
+}
+  .ChatMessages:hover::-webkit-scrollbar-thumb {
+  background: #222222;
+} 
+  .ChatMessages:active::-webkit-scrollbar-thumb {
+  background: #333333;
+} 
+		

@@ -1,6 +1,6 @@
 .Room {
   /* put around the vertical center of page */
-  height: calc(100vh - 150px);
+  height: calc(100vh - 250px);
   display: flex;
   align-items: center;
 }

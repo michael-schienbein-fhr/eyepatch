@@ -8,7 +8,8 @@ const Video = ({
   sendJsonMessage,
   globalPlaybackTime,
   globalPlayerState,
-  setGlobalPlayerState,
+  roomMembers,
+  username,
   globalQueue,
   globalVideoId,
   joinSyncTime,
@@ -19,7 +20,6 @@ const Video = ({
   const [currentVideoId, setCurrentVideoId] = useState(null);
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
-  const [timeoutBool, setTimeoutBool] = useState(false);
   const playerRef = useRef(null);
   const interval = useRef(null);
   const timeout = useRef(null);
@@ -27,6 +27,8 @@ const Video = ({
   let prevLoaded;
 
   const handleSync = (time) => {
+    console.log(roomMembers);
+    console.log(roomMembers.includes(username))
     handleSeek('self', time, 'seek');
   };
   useEffect(function () {
@@ -37,7 +39,7 @@ const Video = ({
     }
   }, [player])
   useEffect(function () {
-    onProgress(true);
+    // onProgress(true);
     if (player && globalVideoId !== currentVideoId) {
       setCurrentVideoId(globalVideoId);
     };
@@ -79,7 +81,7 @@ const Video = ({
           if (!timeoutBool) {
             sendJsonMessage({ type: "playerState", who: 'exclusive', state: "seek", time: playedSeconds, videoId: currentVideoId });
           } else if (timeoutBool) {
-            sendJsonMessage({ type: "playerState", state: "sync", time: playedSeconds});
+            sendJsonMessage({ type: "playerState", state: "sync", time: playedSeconds });
           }
         };
 
@@ -98,13 +100,16 @@ const Video = ({
 
   const onReady = (e) => {
     setPlayer(e.target);
+    // setPlayerIds((_Ids) => [..._Ids, e.target.id]);
+    // console.log(playerIds)
+    // sendJsonMessage({ type: 'playerId', id: e.target.id })
   };
 
   const handleStateChange = (e) => handleEvent(e);
   const handlePlay = () => {
     clearInterval(interval.current);
     clearTimeout(timeout.current);
-    onProgress(true);
+    // onProgress(true);
     sendJsonMessage({ type: "playerState", who: 'exclusive', state: "play", time: playbackTime, videoId: currentVideoId });
   };
   const handlePause = () => {
@@ -131,7 +136,7 @@ const Video = ({
     };
   };
   const handleCue = () => {
-    
+
   };
 
   const isSubArrayEnd = (A, B) => {
@@ -147,6 +152,7 @@ const Video = ({
   };
 
   const handleEvent = (e) => {
+    
     setPlaybackTime(player.getCurrentTime());
     // Update sequence with current state change event
     if (e.data === 5) {
@@ -156,7 +162,11 @@ const Video = ({
     }
     setSequence([...sequence, e.data]);
     if (e.data === 1 && isSubArrayEnd(sequence, [3]) && !sequence.includes(-1)) {
-      handleSeek('exclusive', playbackTime, 'seek'); // Arrow keys seek
+      if (!roomMembers.includes(username)) {
+        handleSeek('exclusive', playbackTime, 'seek'); // Arrow keys seek
+      }
+
+
       setSequence([]); // Reset event sequence
     } else {
       clearTimeout(timer); // Cancel previous event
@@ -172,8 +182,8 @@ const Video = ({
   };
   // let autoplayBool = currentVideoId === null ? 0 : 1;
   const opts = {
-    height: '200',
-    width: '400',
+    height: '675',
+    width: '1200',
     playerVars: {
       autoplay: 1,
     },

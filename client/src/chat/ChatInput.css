@@ -1,3 +1,23 @@
-.ChatMessages {
+.message-input-container {
+  /* display: flex; */
+  padding: 1rem;
+  flex-direction: column;
+  border-radius: 1rem 1rem 0rem 0rem;
+  background: #141414;
+}
+  
+.chatting-as {
+  margin-top: 0;
+  margin-bottom: 1rem;
+
   text-align: center;
+
+  font-size: 1rem;
+  line-height: 1rem;
+  letter-spacing: -0.015em;
+}
+
+.message-input-container-inner {
+  display: flex;
+  gap: 1rem;
 }

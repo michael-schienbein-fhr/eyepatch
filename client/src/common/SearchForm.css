@@ -1,4 +1,13 @@
 .SearchForm input:focus {
   box-shadow: none;
+  color: whitesmoke;
+  background-color: black;
   border-color: #ced4da;
+}
+
+.SearchForm input {
+  box-shadow: none;
+  color: white;
+  background-color: black;
+  border-color: #6c757d;
 }
