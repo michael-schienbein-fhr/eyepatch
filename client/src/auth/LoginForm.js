@@ -1,3 +1,4 @@
+import './LoginForm.css';
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import Alert from "../common/Alert";
@@ -86,7 +87,7 @@ function LoginForm({ login }) {
                     : null}
 
                 <button
-                    className="btn btn-primary mt-3"
+                    className="btn btn-md btn-outline-secondary mt-3"
                     onSubmit={handleSubmit}
                 >
                   Submit

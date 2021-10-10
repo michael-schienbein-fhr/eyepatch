@@ -1,16 +1,16 @@
-.ProfileForm {
+.SignupForm {
   color: whitesmoke;
 }
-.ProfileForm p {
+.SignupForm p {
   color: whitesmoke;
 }
 
-.ProfileForm button {
+.SignupForm button {
 background-color:black;
 color: red;
 }
 
-.ProfileForm h3 {
+.SignupForm h3 {
   color: whitesmoke;
 }
 
