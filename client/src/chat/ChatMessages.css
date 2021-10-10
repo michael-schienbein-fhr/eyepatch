@@ -1,6 +1,5 @@
 .ChatMessages {
   flex: 1;
-	/* padding-top: 1rem; */
 	overflow-y: auto;
   background-color: black;
   border: 1px solid;

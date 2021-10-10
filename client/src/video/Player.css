@@ -10,6 +10,10 @@
   padding-bottom: 56.25%;
   padding-top: 25px;
   height: 0;
+  background-color: black;
+  border: 1px solid;
+  border-color: #6c757d;
+  border-radius: .25rem;
 }
 
 .Player iframe {

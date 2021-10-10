@@ -1,13 +1,28 @@
 .video-item {
-    display: flex !important;
-    align-items: center !important;
+    display: flex;
+    align-items: center;
     justify-content:center;
     cursor: pointer;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
 }
 
 .video-item.item img {
     max-width: 200px;
     max-height: 250px ;
+}
+
+.video-item-remove{
+
+    position: absolute;
+
+    left: 80%;
+    top: 0px;
+    z-index: 1000;
+    background-color: #92AD40;
+    padding: 0;
+    padding-top: 0.25em;
+    padding-left: 0.25em;
+    color: #FFFFFF;
+    font-weight: bold;
 }
