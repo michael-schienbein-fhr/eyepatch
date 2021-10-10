@@ -11,3 +11,7 @@
   background-color: black;
   border-color: #6c757d;
 }
+
+.SearchForm button {
+  color: red;
+}

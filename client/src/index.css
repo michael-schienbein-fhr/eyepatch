@@ -10,7 +10,12 @@ body {
   font-size: 14rem;
   
 }
-
+a{
+  color: red!important;
+}
+a:hover{
+  color: white!important;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

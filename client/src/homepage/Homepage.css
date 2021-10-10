@@ -4,3 +4,11 @@
   display: flex;
   align-items: center;
 }
+.Homepage h1, p {
+  color: whitesmoke;
+}
+
+.Homepage button {
+  background-color:black;
+  color: red;
+}

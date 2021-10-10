@@ -27,11 +27,11 @@ function Homepage() {
               </h2>
               : (
                   <p>
-                    <Link className="btn btn-primary font-weight-bold me-1"
+                    <Link className="btn btn-md btn-outline-secondary font-weight-bold me-1"
                           to="/login">
                       Log in
                     </Link>
-                    <Link className="btn btn-primary font-weight-bold"
+                    <Link className="btn btn-md btn-outline-secondary font-weight-bold"
                           to="/signup">
                       Sign up
                     </Link>

@@ -1,3 +1,4 @@
+import './ProfileForm.css';
 import React, { useState, useContext } from "react";
 import Alert from "../common/Alert";
 import EyepatchApi from "../api/api";
@@ -91,7 +92,7 @@ function ProfileForm() {
   }
 
   return (
-      <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+      <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4 ProfileForm">
         <h3>Profile</h3>
         <div className="card">
           <div className="card-body">
@@ -148,7 +149,7 @@ function ProfileForm() {
                   : null}
 
               <button
-                  className="btn btn-primary btn-block mt-4"
+                  className="btn btn-md btn-outline-secondary btn-block mt-4"
                   onClick={handleSubmit}
               >
                 Save Changes

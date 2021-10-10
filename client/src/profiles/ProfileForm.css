@@ -1,0 +1,27 @@
+.ProfileForm {
+  color: whitesmoke;
+}
+.ProfileForm p {
+  color: whitesmoke;
+}
+
+.ProfileForm button {
+background-color:black;
+color: red;
+}
+
+.ProfileForm h3 {
+  color: whitesmoke;
+}
+
+.card {
+  background-color: black;
+  border-color: #6c757d;
+}
+
+.form-group input {
+  box-shadow: none;
+  color: white;
+  background-color: black;
+  border-color: #6c757d;
+}
