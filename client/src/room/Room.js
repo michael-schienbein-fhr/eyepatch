@@ -148,7 +148,7 @@ const Room = () => {
               handleVideoChange={handleVideoChange}
             />
           </div>
-          {/* <div className="p-1"> */}
+          <div className="p-1">
             <Chat
               messages={messages}
               username={username}
@@ -156,7 +156,7 @@ const Room = () => {
               connectionStatus={connectionStatus}
               readyState={readyState}
             />
-          {/* </div> */}
+          </div>
           <div className="p-1">
             <VideoList
               videoSearchRes={videoSearchRes}
