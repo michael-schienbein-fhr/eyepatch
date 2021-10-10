@@ -1,8 +1,7 @@
 // import './Youtube.css';
+import './Player.css';
 import YouTube from "react-youtube";
 import { useState, useEffect, useRef } from "react";
-
-
 
 const Video = ({
   sendJsonMessage,
@@ -182,15 +181,13 @@ const Video = ({
   };
   // let autoplayBool = currentVideoId === null ? 0 : 1;
   const opts = {
-    height: '675',
-    width: '1200',
     playerVars: {
       autoplay: 1,
     },
   };
 
   return (
-    <div>
+    <div className='Player'>
       <YouTube
         ref={playerRef}
         videoId={currentVideoId}

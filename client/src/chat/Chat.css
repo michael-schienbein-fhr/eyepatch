@@ -1,7 +1,6 @@
 .Chat {
 		display: flex;
 		height: calc(100vh - 250px);
-		/* height: 500px; */
 		max-width: 20rem;
 		min-width: 20rem;
 		margin: auto;

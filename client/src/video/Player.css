@@ -1,0 +1,24 @@
+.Player {
+  display: flex;
+  min-height: calc(100vh - 250px);
+  justify-content: center;
+  /* max-width: 120rem; */
+  /* height: '675'; */
+  /* width: 1200px; */
+  min-width: calc(70vw - 250px);
+  float: none;
+    clear: both;
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 25px;
+    height: 0;
+}
+
+.Player iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
