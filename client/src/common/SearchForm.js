@@ -48,7 +48,7 @@ function SearchForm({ searchFor }) {
           class="btn btn-md btn-outline-secondary"
           type="button"
           onClick={handleSubmit}
-        >Button</button>
+        >Search</button>
       </div>
     </div>
   );
