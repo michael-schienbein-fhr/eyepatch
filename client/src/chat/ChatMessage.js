@@ -6,9 +6,7 @@ const ChatMessage = ({ message, username, self }) => {
           key={message.idx}
           // className={'message-container' + (username === self ? ' own-message' : '')}>
           className='message-container'>
-          <header className='message-header'>
-            <h4 className='message-sender'>{username === self ? 'You' : username}</h4>
-          </header>
+          <h4 className='message-sender'>{username === self ? 'You: ' : `${username}: `}</h4>
           <p className='message-body'>{message}</p>
     </article>
   );
