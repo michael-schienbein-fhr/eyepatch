@@ -1,8 +1,11 @@
 .ChatMessages {
   flex: 1;
-	padding-top: 1rem;
+	/* padding-top: 1rem; */
 	overflow-y: auto;
   background-color: black;
+  border: 1px solid;
+  border-color: #6c757d;
+  border-radius: .25rem;
 }
 ::-webkit-scrollbar {
 		background: black;
