@@ -10,7 +10,7 @@ import SearchForm from '../common/SearchForm';
 import youtube from '../api/youtube';
 
 const WEBSOCKET_BASE = (process.env.NODE_ENV === "test")
-  ? "ws://192.168.1.40:8001"
+  ? "http://192.168.1.40:8001"
   : "ws://localhost:8001" //put heroku here
 
 const Room = () => {
@@ -35,7 +35,7 @@ const Room = () => {
 
   const onOpen = () => {
     console.log('opened');
-    sendJsonMessage({ type: "join", username })
+    sendJsonMessage({ type: "join", username, id})
   };
 
   const onMessage = (e) => {

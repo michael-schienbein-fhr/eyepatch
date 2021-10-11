@@ -17,15 +17,3 @@ const VideoItem = ({ video, handleVideoRemoval, handleVideoChange }) => {
   )
 };
 export default VideoItem;
-
-{/* <div class="container">
-  <div href="#" class="like-button" title="Like Button">
-    <i class="fa fa-heart fa-1x"></i>
-  </div>
-  <img src="https://staticvideos.pexels.com/videos/1448735/pictures/preview-0.jpg" alt="Beautiful Image" class="image">
-  <div class ="overlay">
-    <button href="#" class ="play-icon" title="Video Play">
-    <i class ="fa fa-play"></i>
-  </button>
-  </div>
-</div> */}

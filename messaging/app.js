@@ -1,35 +1,21 @@
-/** app for groupchat */
-
-const express = require('express');
-const app = express();
-// const path = require("path");
-
-//Serve frontend files
-// app.use(express.static(path.join(__dirname, "..", "client", "build"))); 
 
 
-/** Handle websocket chat */
-
-// allow for app.ws routes for websocket routes
-const wsExpress = require('express-ws')(app);
+const app = require('express')
+const { PORT } = require("./config");
+const { Server } = require('ws');
+// const wss = new WebSocketServer({ port: PORT });
 const ChatUser = require('./ChatUser');
 
+const server = app().listen(PORT, () => console.log(`Listening on ${PORT}`));
+const wss = new Server({ server });
+//initialize a simple http server
 
-
-/** Handle a persistent connection to /chat/[roomName]
- *
- * Note that this is only called *once* per client --- not every time
- * a particular websocket chat is sent.
- *
- * `ws` becomes the socket for the client; it is specific to that visitor.
- * The `ws.send` method is how we'll send messages back to that socket.
- */
-
-app.ws('/room/:roomId', function (ws, req, next) {
+wss.on('connection', function connection(ws, req) {
+  console.log("url: ", req.url.charAt(req.url.length - 1));
   try {
     const user = new ChatUser(
       ws.send.bind(ws), // fn to call to message this user
-      req.params.roomId // name of room for user
+      req.url.charAt(req.url.length - 1)// name of room for user
     );
 
     // register handlers for message-received, connection-closed
@@ -52,6 +38,11 @@ app.ws('/room/:roomId', function (ws, req, next) {
   } catch (err) {
     console.error(err);
   }
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+
+
 });
 
-module.exports = app;
+// module.exports = app;
