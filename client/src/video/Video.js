@@ -16,6 +16,7 @@ const Video = ({
 }) => {
   const [playbackTime, setPlaybackTime] = useState(null);
   const [player, setPlayer] = useState(null);
+  const [allowEvents, setAllowEvents] = useState(false);
   const [currentVideoId, setCurrentVideoId] = useState(null);
   const [sequence, setSequence] = useState([]);
   const [timer, setTimer] = useState(null);
@@ -26,22 +27,23 @@ const Video = ({
   let prevLoaded;
 
   const handleSync = (time) => {
-    console.log(roomMembers);
-    console.log(roomMembers.includes(username))
-    handleSeek('self', time, 'seek');
+    player.seekTo(time);
+    setTimeout(() => setAllowEvents(true), 100);
   };
   useEffect(function () {
     clearInterval(interval.current);
     clearTimeout(timeout.current);
     if (player) {
       setTimeout(() => handleSync(joinSyncTime), 1000)
+      console.log(player);
     }
   }, [player])
   useEffect(function () {
-    // onProgress(true);
+    onProgress(true);
     if (player && globalVideoId !== currentVideoId) {
       setCurrentVideoId(globalVideoId);
     };
+
   }, [globalVideoId, player]);
 
   useEffect(function () {
@@ -108,7 +110,7 @@ const Video = ({
   const handlePlay = () => {
     clearInterval(interval.current);
     clearTimeout(timeout.current);
-    // onProgress(true);
+    onProgress(true);
     sendJsonMessage({ type: "playerState", who: 'exclusive', state: "play", time: playbackTime, videoId: currentVideoId });
   };
   const handlePause = () => {
@@ -151,7 +153,8 @@ const Video = ({
   };
 
   const handleEvent = (e) => {
-    
+    // console.log(e);
+    if (!allowEvents) return;
     setPlaybackTime(player.getCurrentTime());
     // Update sequence with current state change event
     if (e.data === 5) {
@@ -161,9 +164,10 @@ const Video = ({
     }
     setSequence([...sequence, e.data]);
     if (e.data === 1 && isSubArrayEnd(sequence, [3]) && !sequence.includes(-1)) {
-      if (!roomMembers.includes(username)) {
-        handleSeek('exclusive', playbackTime, 'seek'); // Arrow keys seek
-      }
+      // if (!roomMembers.includes(username)) {
+
+      // }
+      handleSeek('exclusive', playbackTime, 'seek'); // Arrow keys seek
 
 
       setSequence([]); // Reset event sequence

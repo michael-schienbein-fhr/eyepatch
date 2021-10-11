@@ -1,36 +1,21 @@
+import './Rooms.css';
 import { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import SearchForm from "../common/SearchForm";
 import EyepatchApi from "../api/api";
 import RoomCard from "./RoomCard";
 import LoadingSpinner from "../common/LoadingSpinner";
 
-/** Show page with list of companies.
- *
- * On mount, loads companies from API.
- * Re-loads filtered companies on submit from search form.
- *
- * This is routed to at /companies
- *
- * Routes -> { CompanyCard, SearchForm }
- */
 
 const Rooms = ({ joinRoom }) => {
   console.debug("Rooms");
 
   const [rooms, setRooms] = useState(null);
-  const history = useHistory();
   useEffect(function getRoomsOnMount() {
     console.debug("Rooms useEffect getRoomsOnMount");
-    search();
+    getRooms();
   }, []);
 
-  const redirect = () => {
-    let path = `/rooms/create`;
-    history.push(path);
-  }
-  /** Triggered by search form submit; reloads rooms. */
-  async function search() {
+  /** Triggered by getRooms form submit; reloads rooms. */
+  async function getRooms() {
     let rooms = await EyepatchApi.getRooms();
     setRooms(rooms);
   }
@@ -39,12 +24,15 @@ const Rooms = ({ joinRoom }) => {
 
   // console.log(rooms);
   return (
-    <div className="Rooms col-md-8 offset-md-2">
-      <button onClick={redirect}>Create New Room</button>
-      {/* <SearchForm searchFor={search} /> */}
+    <div className="Rooms container overflow-auto">
+      {/* <button
+          class="btn btn-md btn-outline-secondary mb-3"
+          type="button"
+          onClick={redirect}
+        >Create New Room</button> */}
       {rooms.length
         ? (
-          <div className="Rooms-list">
+          <div className="row overflow-auto">
             {rooms.map(c => (
               <RoomCard
                 key={c.id}

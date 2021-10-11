@@ -1,0 +1,14 @@
+.RoomCard {
+ display: flex;
+ justify-content: center;
+ /* width: 100%;  */
+}
+
+.RoomCard-link{
+  text-decoration: none;
+  width: 100%;
+  background-color: black;
+  border: 1px solid;
+  border-color: #6c757d;
+  border-radius: .25rem;
+}

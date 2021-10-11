@@ -1,4 +1,5 @@
 // import {useContext} from "react";
+import './Routes.css';
 import { useContext } from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
 import Homepage from "../homepage/Homepage";
@@ -30,7 +31,7 @@ function Routes({ login, signup, joinRoom, createRoom }) {
   );
 
   return (
-    <div className="pt-5">
+    <div className="Routes pt-5 overflow-auto">
       <Switch>
         <Route exact path="/">
           <Homepage />

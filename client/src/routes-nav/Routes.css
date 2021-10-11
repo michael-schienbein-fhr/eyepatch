@@ -1,0 +1,25 @@
+/* .Routes {
+  flex: 1;
+	overflow-y:scroll;
+  background-color: black;
+  border: 1px solid;
+  border-color: #6c757d;
+  border-radius: .25rem;
+}
+::-webkit-scrollbar {
+		background: black;
+		width: 8px;
+}
+::-webkit-scrollbar-button {
+		display: none;
+}
+::-webkit-scrollbar-thumb {
+		background: #141414;
+		border-radius: 4px;
+}
+  .Routes:hover::-webkit-scrollbar-thumb {
+  background: #222222;
+} 
+  .Routes:active::-webkit-scrollbar-thumb {
+  background: #333333;
+}  */

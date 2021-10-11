@@ -56,6 +56,9 @@ const Room = () => {
       setGlobalPlayerState("seek");
     } else if (message.type === 'video' && message.action === 'sync') {
       setJoinSyncTime(message.time);
+      // getWebSocket().close()
+      // getWebSocket().open();
+      console.log(getWebSocket());
     } else if (message.type === 'members') {
       setRoomMembers((_members) => [..._members, message.roomMember]);
     }
@@ -67,7 +70,7 @@ const Room = () => {
     // sendMessage,
     // lastMessage,
     // lastJsonMessage,
-    // getWebSocket
+    getWebSocket
   } = useWebSocket(wsURL, {
     onOpen,
     onMessage,
@@ -75,7 +78,7 @@ const Room = () => {
     // onError: handleError,
 
     //Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: (closeEvent) => true,
+    shouldReconnect: (closeEvent) => false,
   });
 
   const connectionStatus = {

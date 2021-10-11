@@ -73,7 +73,7 @@ class Room {
     }
 
     if (password === "") {
-      password = null;
+      hashedPassword = await bcrypt.hash(password, BCRYPT_WF);
       hasPass = false;
     };
 

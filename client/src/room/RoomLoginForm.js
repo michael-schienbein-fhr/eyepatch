@@ -79,7 +79,7 @@ function RoomLoginForm({ joinRoom }) {
                 : null}
 
               <button
-                className="btn btn-primary mt-3"
+                class="btn btn-md btn-outline-secondary mt-3"
                 onSubmit={handleSubmit}
               >
                 Submit

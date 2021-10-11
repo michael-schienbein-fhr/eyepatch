@@ -18,6 +18,7 @@ import jwt from "jsonwebtoken";
 
 function CreateRoomForm({ createRoom }) {
   const { currentUser } = useContext(UserContext);
+  // const [passFlag, setPassFlag] = useState(null);
   const history = useHistory();
   const [formData, setFormData] = useState({
     room_owner: "",
@@ -55,8 +56,13 @@ function CreateRoomForm({ createRoom }) {
 
   async function handleSubmit(evt) {
     evt.preventDefault();
+
     let result = await createRoom(formData);
+
     let { passFlag } = jwt.decode(result.roomToken);
+
+
+
     if (result.success && passFlag === false) {
       history.push(`/rooms/${newRoomId + 1}`);
     } else if (result.success && passFlag === true) {
@@ -105,7 +111,7 @@ function CreateRoomForm({ createRoom }) {
 
               <button
                 type="submit"
-                className="btn btn-primary mt-3"
+                class="btn btn-md btn-outline-secondary mt-3"
                 onSubmit={handleSubmit}
               >
                 Submit

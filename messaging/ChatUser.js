@@ -33,11 +33,11 @@ class ChatUser {
 
   handleJoin(username) {
     this.username = username;
-    for (let member of this.members) {
+    // for (let member of this.members) {
 
-      console.log(member)
-      console.log(member.username)
-    }
+    //   console.log(member)
+    //   console.log(member.username)
+    // }
     this.room.join(this);
     this.room.broadcast({
       type: 'note',
@@ -56,13 +56,13 @@ class ChatUser {
         thumbnail: video.thumbnail
       });
     };
-    for (let member of this.members) {
-      this.room.broadcastSelf({
-        username: this.username,
-        type: 'members',
-        roomMember: member.username
-      });
-    };
+    // for (let member of this.members) {
+    //   this.room.broadcastSelf({
+    //     username: this.username,
+    //     type: 'members',
+    //     roomMember: member.username
+    //   });
+    // };
     this.room.broadcastSelf({
       username: this.username,
       type: 'video',
