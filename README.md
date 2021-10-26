@@ -1,56 +1,15 @@
 # <b>Eyepatch</b>
 
+<b>This repository is outdated, please see the following for more information about Eyepatch:</b>
+- [Backend server / database][1]
+- [Messaging server][2]
+- [Frontend code][3]
+
+[1]: https://github.com/mschien/eyepatch-server
+[2]: https://github.com/mschien/eyepatch-messaging
+[3]: https://github.com/mschien/eyepatch-client
+
 ## Database Schema
 The Database is fairly simple, storing users and videos to be assigned using many to one relationships to the various rooms.
 ![DB Schema](./eyepatchDBschema.png)
 
-<!-- ![Keymix Homepage](https://github.com/fact0/capstoneOne/blob/master/keymixhome.jpg?raw=true)
-## Live Demo:
-[https://keymix.herokuapp.com/](https://keymix.herokuapp.com/)
-
-## Installation and Requirements
-
-- Python 3
-- Flask
-- Postgresql Server
-
-Execute the following command in a terminal to install all the required modules.
-
-```
-pip install -r requirements.txt
-```
-
-Additionally you will need Postgres installed and configured correctly, after install you must create an empty database for keymix.
-
-```
-psql -c "keymix" // from shell
-CREATE DATABASE keymix; // from the psql console
-```
-
-Afterwards set the correct Flask environmental variable and run Flask.
-
-```
-export FLASK_APP=keymix
-flask run
-```
-
-## <b>Spotify API</b>
-
-<b>Reference Docs for end points used in this app:
-[https://api.spotify.com/v1/](https://developer.spotify.com/documentation/web-api/reference/)
-
-## <b>Built With</b>
-
-- Python
-
-- Flask
-
-- HTML
-
-- CSS
-
-- Bulma
-
-- JS
-
-- jQuery -->
